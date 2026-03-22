@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      padding: 24px;
+    }
+
+    h2 { font-size: 18px; margin-bottom: 6px; color: #111; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+
+    label.field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    select:focus, input[type="text"]:focus { outline: none; border-color: #007aff; }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .filter-row input[type="text"] { flex: 1; margin-bottom: 0; }
+    .filter-row select             { flex: 1; margin-bottom: 0; }
+
+    #device-list {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      max-height: 260px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+
+    .device-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .device-item:last-child { border-bottom: none; }
+    .device-item:hover { background: #f7f7f7; }
+    .device-item.selected { background: #e8f0fe; }
+
+    .device-item input[type="checkbox"] {
+      margin-right: 10px;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #007aff;
+    }
+
+    .device-name { font-size: 14px; flex: 1; }
+    .device-zone { font-size: 11px; color: #aaa; margin-left: 6px; }
+
+    .hint { font-size: 12px; color: #999; margin-bottom: 8px; }
+
+    #error-msg {
+      color: #e53e3e;
+      font-size: 13px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    #loading {
+      padding: 16px;
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 8px;
+    }
+
+    button:hover { background: #0062cc; }
+    button:disabled { background: #aaa; cursor: default; }
+  </style>
+</head>
+<body>
+
+  <h2>Edit Binding Group</h2>
+  <p class="subtitle" id="device-count">Loading...</p>
+
+  <label class="field-label">Devices to Sync</label>
+  <p class="hint">Select at least 2 devices with ON/OFF capability.</p>
+
+  <div class="filter-row">
+    <input type="text" id="filter-text" placeholder="Search by name..." oninput="applyFilter()" />
+    <select id="filter-zone" onchange="applyFilter()">
+      <option value="">All zones</option>
+    </select>
+  </div>
+
+  <div id="device-list">
+    <div id="loading">Loading devices...</div>
+  </div>
+
+  <div id="error-msg"></div>
+
+  <button id="btn-save" onclick="saveBinding()" disabled>Save Changes</button>
+
+  <script>
+    var availableDevices = [];
+    var selectedIds = {}; // id → true (persists across filter redraws)
+
+    function showError(msg) {
+      var el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    function buildZoneOptions(devices) {
+      var seen = {};
+      var zones = [];
+      devices.forEach(function(d) {
+        if (d.zoneId && d.zoneName && !seen[d.zoneId]) {
+          seen[d.zoneId] = true;
+          zones.push({ id: d.zoneId, name: d.zoneName });
+        }
+      });
+      zones.sort(function(a, b) { return a.name.localeCompare(b.name); });
+      var select = document.getElementById('filter-zone');
+      zones.forEach(function(z) {
+        var opt = document.createElement('option');
+        opt.value = z.id;
+        opt.textContent = z.name;
+        select.appendChild(opt);
+      });
+    }
+
+    function applyFilter() {
+      var text = document.getElementById('filter-text').value.toLowerCase();
+      var zoneId = document.getElementById('filter-zone').value;
+      var filtered = availableDevices.filter(function(d) {
+        return (!text || d.name.toLowerCase().includes(text)) &&
+               (!zoneId || d.zoneId === zoneId);
+      });
+      renderDevices(filtered);
+    }
+
+    function renderDevices(devices) {
+      var list = document.getElementById('device-list');
+      if (devices.length === 0) {
+        list.innerHTML = '<div id="loading">No devices match the filter.</div>';
+        return;
+      }
+      list.innerHTML = devices.map(function(d) {
+        var checked = selectedIds[d.id] ? ' checked' : '';
+        var selClass = selectedIds[d.id] ? ' selected' : '';
+        var zoneBadge = d.zoneName ? '<span class="device-zone">' + d.zoneName + '</span>' : '';
+        return '<label class="device-item' + selClass + '" id="item-' + d.id + '">' +
+          '<input type="checkbox" value="' + d.id + '"' + checked + ' onchange="onCheckChange(this)" />' +
+          '<span class="device-name">' + d.name + '</span>' + zoneBadge +
+          '</label>';
+      }).join('');
+      updateCount();
+    }
+
+    function updateCount() {
+      var n = Object.keys(selectedIds).length;
+      document.getElementById('device-count').textContent = n + ' device' + (n !== 1 ? 's' : '') + ' selected';
+    }
+
+    function onCheckChange(checkbox) {
+      if (checkbox.checked) {
+        selectedIds[checkbox.value] = true;
+        var item = document.getElementById('item-' + checkbox.value);
+        if (item) item.classList.add('selected');
+      } else {
+        delete selectedIds[checkbox.value];
+        var item = document.getElementById('item-' + checkbox.value);
+        if (item) item.classList.remove('selected');
+      }
+      updateCount();
+    }
+
+    function saveBinding() {
+      showError('');
+      var deviceIds = Object.keys(selectedIds);
+      if (deviceIds.length < 2) { showError('Please select at least 2 devices.'); return; }
+
+      document.getElementById('btn-save').disabled = true;
+
+      Homey.emit('save_config', { deviceIds: deviceIds })
+        .then(function() { Homey.done(); })
+        .catch(function(err) {
+          showError((err && err.message) || 'Error saving binding.');
+          document.getElementById('btn-save').disabled = false;
+        });
+    }
+
+    Homey.emit('get_config', null)
+      .then(function(config) {
+        config = config || {};
+        (config.deviceIds || []).forEach(function(id) { selectedIds[id] = true; });
+        return Homey.emit('get_available_devices', null);
+      })
+      .then(function(devices) {
+        availableDevices = devices || [];
+        buildZoneOptions(availableDevices);
+        renderDevices(availableDevices);
+        document.getElementById('btn-save').disabled = false;
+      })
+      .catch(function() {
+        document.getElementById('loading').textContent = 'Error loading configuration.';
+      });
+  </script>
+
+</body>
+</html>

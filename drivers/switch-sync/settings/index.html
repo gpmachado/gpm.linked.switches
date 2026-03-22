@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root {
+      --brand: #E63946;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    /* ── Section ── */
+    .section { margin-bottom: 24px; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* ── Device list ── */
+    .device-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 14px;
+    }
+
+    .device-row:last-child { border-bottom: none; }
+
+    .device-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .device-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+    }
+
+    .device-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .device-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .device-index {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .device-count {
+      font-size: 12px;
+      color: #888;
+      padding: 10px 16px;
+      border-top: 1px solid #f0f0f0;
+      text-align: right;
+    }
+
+    .empty {
+      font-size: 13px;
+      color: #aaa;
+      padding: 16px;
+      text-align: center;
+    }
+
+    /* ── Settings row ── */
+    .setting-row {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+    }
+
+    .setting-row:last-child { border-bottom: none; }
+
+    .setting-label {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .setting-hint {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    input[type="number"] {
+      width: 90px;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: right;
+      background: #fafafa;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #007aff;
+      background: #fff;
+    }
+
+    /* iOS-style toggle */
+    .toggle-wrap {
+      position: relative;
+      width: 51px;
+      height: 31px;
+      flex-shrink: 0;
+    }
+
+    .toggle-wrap input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 31px;
+      background: #ddd;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-wrap input:checked + .toggle-track { background: #34c759; }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+
+    .toggle-wrap input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+    .save-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+
+    .save-btn:hover  { opacity: 0.88; }
+    .save-btn:active { opacity: 0.76; }
+
+    .save-btn:disabled {
+      background: #aaa;
+      cursor: default;
+    }
+
+    .feedback {
+      font-size: 13px;
+      color: #34c759;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Linked Switches -->
+  <div class="section">
+    <div class="section-title">Linked Switches</div>
+    <div class="card" id="device-card">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Advanced -->
+  <div class="section">
+    <div class="section-title">Advanced</div>
+    <div class="card">
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Echo suppress window</div>
+          <div class="setting-hint">Ignore echoes after sending a command (ms)</div>
+        </div>
+        <input type="number" id="suppress_ms" min="500" max="10000" step="100" value="2000" />
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Debug logging</div>
+          <div class="setting-hint">Write verbose logs to the app console</div>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="debug" />
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="save-btn" id="save-btn" onclick="save()">Save</button>
+  <div class="feedback" id="feedback"></div>
+
+  <script>
+    function renderDevices(namesStr) {
+      var card = document.getElementById('device-card');
+      var names = (namesStr || '').split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+
+      if (names.length === 0) {
+        card.innerHTML = '<div class="empty">No devices linked yet.</div>';
+        return;
+      }
+
+      var powerIcon = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M12 3v9"/>' +
+        '<path d="M18.36 5.64a9 9 0 1 1-12.73 0"/>' +
+        '</svg>';
+
+      var html = names.map(function(name, i) {
+        return '<div class="device-row">' +
+          '<div class="device-icon">' + powerIcon + '</div>' +
+          '<div class="device-info">' +
+            '<div class="device-name">' + name + '</div>' +
+            '<div class="device-index">Switch ' + (i + 1) + '</div>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+
+      html += '<div class="device-count">' + names.length + ' switch' + (names.length !== 1 ? 'es' : '') + ' linked</div>';
+      card.innerHTML = html;
+    }
+
+    function load() {
+      // Load all settings
+      Promise.all([
+        Homey.get('linked_devices_info'),
+        Homey.get('suppress_ms'),
+        Homey.get('debug'),
+      ]).then(function(values) {
+        renderDevices(values[0]);
+        if (values[1] != null) document.getElementById('suppress_ms').value = values[1];
+        if (values[2] != null) document.getElementById('debug').checked = !!values[2];
+      }).catch(function() {
+        // Fallback to individual gets
+        Homey.get('linked_devices_info').then(renderDevices).catch(function() {});
+      });
+    }
+
+    function save() {
+      var suppressMs = parseInt(document.getElementById('suppress_ms').value, 10);
+      var debug      = document.getElementById('debug').checked;
+
+      if (isNaN(suppressMs) || suppressMs < 500 || suppressMs > 10000) {
+        document.getElementById('feedback').style.color = '#e53e3e';
+        document.getElementById('feedback').textContent = 'Suppress window must be 500–10000 ms.';
+        return;
+      }
+
+      var btn = document.getElementById('save-btn');
+      btn.disabled = true;
+      document.getElementById('feedback').textContent = '';
+
+      Promise.all([
+        Homey.set('suppress_ms', suppressMs),
+        Homey.set('debug', debug),
+      ]).then(function() {
+        document.getElementById('feedback').style.color = '#34c759';
+        document.getElementById('feedback').textContent = 'Saved ✓';
+        setTimeout(function() {
+          document.getElementById('feedback').textContent = '';
+        }, 2000);
+      }).catch(function(err) {
+        document.getElementById('feedback').style.color = '#e53e3e';
+        document.getElementById('feedback').textContent = 'Error saving settings.';
+      }).finally(function() {
+        btn.disabled = false;
+      });
+    }
+
+    // Apply brandColor from app manifest if available
+    try {
+      if (Homey.manifest && Homey.manifest.brandColor) {
+        document.documentElement.style.setProperty('--brand', Homey.manifest.brandColor);
+      }
+    } catch(e) {}
+
+    load();
+  </script>
+
+</body>
+</html>

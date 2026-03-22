@@ -1,0 +1,50 @@
+{
+  "drivers": {
+    "switch-sync": {
+      "name": "Switch Sync Group",
+      "settings": {
+        "mode": {
+          "label": "Sync Mode",
+          "hint": "Bidirectional: any device triggers all. Master Only: only the first selected device triggers others."
+        },
+        "suppress_ms": {
+          "label": "Echo Suppress Window (ms)",
+          "hint": "How long to ignore echoes after setting a device. Prevents feedback loops."
+        }
+      },
+      "pair": {
+        "start": {
+          "title": "Create Switch Sync Group"
+        }
+      }
+    }
+  },
+  "flow": {
+    "triggers": {
+      "binding_turned_on": {
+        "title": "A binding group turned on",
+        "titleFormatted": "[[device]] turned on"
+      },
+      "binding_turned_off": {
+        "title": "A binding group turned off",
+        "titleFormatted": "[[device]] turned off"
+      }
+    },
+    "conditions": {
+      "binding_is_on": {
+        "title": "Binding group is on",
+        "titleFormatted": "[[device]] is on"
+      }
+    },
+    "actions": {
+      "set_binding_on": {
+        "title": "Turn binding group on",
+        "titleFormatted": "Turn [[device]] on"
+      },
+      "set_binding_off": {
+        "title": "Turn binding group off",
+        "titleFormatted": "Turn [[device]] off"
+      }
+    }
+  }
+}

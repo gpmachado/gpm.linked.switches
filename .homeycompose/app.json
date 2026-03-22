@@ -1,0 +1,33 @@
+{
+  "id": "gpm.linked.switches",
+  "version": "1.0.2",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Linked Switches"
+  },
+  "brandColor": "#E63946",
+  "description": {
+    "en": "Link and synchronize ON/OFF switches in groups"
+  },
+  "category": [
+    "tools"
+  ],
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Gabriel Pedrosa Machado",
+    "email": "g.machado@me.com"
+  },
+  "source": "https://github.com/gpmachado/gpm.linked.switches"
+}

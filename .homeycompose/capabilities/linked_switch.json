@@ -1,0 +1,9 @@
+{
+  "type": "string",
+  "title": { "en": "Linked Switch" },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "./assets/icon.svg",
+  "insights": false
+}

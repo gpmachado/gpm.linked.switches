@@ -1,0 +1,85 @@
+{
+  "name": {
+    "en": "Linked Switch Group"
+  },
+  "images": {
+    "small": "/drivers/switch-sync/assets/images/small.png",
+    "large": "/drivers/switch-sync/assets/images/large.png",
+    "xlarge": "/drivers/switch-sync/assets/images/xlarge.png"
+  },
+  "class": "other",
+  "capabilities": [
+    "onoff"
+  ],
+  "capabilitiesOptions": {
+    "onoff": {
+      "title": { "en": "Binding State" }
+    }
+  },
+  "ui": {
+    "quickAction": "onoff",
+    "components": [
+      { "id": "onoff",           "capabilities": ["onoff"] },
+      { "id": "linked_switch.1",  "capabilities": ["linked_switch.1"] },
+      { "id": "linked_switch.2",  "capabilities": ["linked_switch.2"] },
+      { "id": "linked_switch.3",  "capabilities": ["linked_switch.3"] },
+      { "id": "linked_switch.4",  "capabilities": ["linked_switch.4"] },
+      { "id": "linked_switch.5",  "capabilities": ["linked_switch.5"] },
+      { "id": "linked_switch.6",  "capabilities": ["linked_switch.6"] },
+      { "id": "linked_switch.7",  "capabilities": ["linked_switch.7"] },
+      { "id": "linked_switch.8",  "capabilities": ["linked_switch.8"] },
+      { "id": "linked_switch.9",  "capabilities": ["linked_switch.9"] },
+      { "id": "linked_switch.10", "capabilities": ["linked_switch.10"] }
+    ]
+  },
+  "settings": [
+    {
+      "id": "linked_devices_info",
+      "type": "label",
+      "label": { "en": "Linked Devices" },
+      "value": "None"
+    },
+    {
+      "id": "suppress_ms",
+      "type": "number",
+      "label": { "en": "Echo Suppress Window (ms)" },
+      "hint": { "en": "How long to ignore echoes after setting a device. Prevents feedback loops." },
+      "value": 2000,
+      "attr": { "min": 500, "max": 10000, "step": 100 }
+    },
+    {
+      "id": "debug",
+      "type": "checkbox",
+      "label": { "en": "Enable Debug Logging" },
+      "value": false
+    },
+    {
+      "id": "notify_on_desync",
+      "type": "checkbox",
+      "label": { "en": "Notify on Desync" },
+      "hint": { "en": "Send a notification when a device fails to reach the expected state." },
+      "value": true
+    }
+  ],
+  "pair": [
+    {
+      "id": "start",
+      "navigation": { "next": "list_devices" }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": { "next": "add_devices" }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "repair": [
+    {
+      "id": "start",
+      "navigation": { "next": "none" }
+    }
+  ]
+}
