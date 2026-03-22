@@ -8,11 +8,23 @@
     "local"
   ],
   "name": {
-    "en": "Linked Switches"
+    "en": "Linked Switches",
+    "nl": "Gekoppelde schakelaars",
+    "de": "Verknüpfte Schalter",
+    "fr": "Interrupteurs liés",
+    "es": "Interruptores vinculados",
+    "it": "Interruttori collegati",
+    "pt": "Interruptores vinculados"
   },
   "brandColor": "#E63946",
   "description": {
-    "en": "Link and synchronize ON/OFF switches in groups"
+    "en": "Link and synchronize ON/OFF switches in groups",
+    "nl": "Koppel en synchroniseer aan/uit-schakelaars in groepen",
+    "de": "Verknüpfe und synchronisiere Ein/Aus-Schalter in Gruppen",
+    "fr": "Liez et synchronisez des interrupteurs ON/OFF en groupes",
+    "es": "Vincula y sincroniza interruptores ON/OFF en grupos",
+    "it": "Collega e sincronizza interruttori ON/OFF in gruppi",
+    "pt": "Vincule e sincronize interruptores Liga/Desliga em grupos"
   },
   "category": [
     "tools"

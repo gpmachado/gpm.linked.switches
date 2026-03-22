@@ -1,0 +1,12 @@
+{
+  "drivers": {
+    "switch-sync": {
+      "name": "Gekoppelde schakelaargroep",
+      "pair": {
+        "start": {
+          "title": "Schakelaargroep aanmaken"
+        }
+      }
+    }
+  }
+}

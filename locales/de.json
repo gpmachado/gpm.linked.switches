@@ -1,0 +1,12 @@
+{
+  "drivers": {
+    "switch-sync": {
+      "name": "Verknüpfte Schaltergruppe",
+      "pair": {
+        "start": {
+          "title": "Schaltergruppe erstellen"
+        }
+      }
+    }
+  }
+}

@@ -9,11 +9,23 @@
     "local"
   ],
   "name": {
-    "en": "Linked Switches"
+    "en": "Linked Switches",
+    "nl": "Gekoppelde schakelaars",
+    "de": "Verknüpfte Schalter",
+    "fr": "Interrupteurs liés",
+    "es": "Interruptores vinculados",
+    "it": "Interruttori collegati",
+    "pt": "Interruptores vinculados"
   },
   "brandColor": "#E63946",
   "description": {
-    "en": "Link and synchronize ON/OFF switches in groups"
+    "en": "Link and synchronize ON/OFF switches in groups",
+    "nl": "Koppel en synchroniseer aan/uit-schakelaars in groepen",
+    "de": "Verknüpfe und synchronisiere Ein/Aus-Schalter in Gruppen",
+    "fr": "Liez et synchronisez des interrupteurs ON/OFF en groupes",
+    "es": "Vincula y sincroniza interruptores ON/OFF en grupos",
+    "it": "Collega e sincronizza interruttori ON/OFF in gruppi",
+    "pt": "Vincule e sincronize interruptores Liga/Desliga em grupos"
   },
   "category": [
     "tools"
@@ -34,7 +46,13 @@
   "drivers": [
     {
       "name": {
-        "en": "Linked Switch Group"
+        "en": "Linked Switch Group",
+        "nl": "Gekoppelde schakelaargroep",
+        "de": "Verknüpfte Schaltergruppe",
+        "fr": "Groupe d'interrupteurs liés",
+        "es": "Grupo de interruptores vinculados",
+        "it": "Gruppo di interruttori collegati",
+        "pt": "Grupo de interruptores vinculados"
       },
       "images": {
         "small": "/drivers/switch-sync/assets/images/small.png",
@@ -48,7 +66,13 @@
       "capabilitiesOptions": {
         "onoff": {
           "title": {
-            "en": "Binding State"
+            "en": "Binding State",
+            "nl": "Verbindingsstatus",
+            "de": "Verbindungsstatus",
+            "fr": "État de la liaison",
+            "es": "Estado del enlace",
+            "it": "Stato del collegamento",
+            "pt": "Estado do vínculo"
           }
         }
       },
@@ -128,7 +152,13 @@
           "id": "linked_devices_info",
           "type": "label",
           "label": {
-            "en": "Linked Devices"
+            "en": "Linked Devices",
+            "nl": "Gekoppelde apparaten",
+            "de": "Verknüpfte Geräte",
+            "fr": "Appareils liés",
+            "es": "Dispositivos vinculados",
+            "it": "Dispositivi collegati",
+            "pt": "Dispositivos vinculados"
           },
           "value": "None"
         },
@@ -136,10 +166,22 @@
           "id": "suppress_ms",
           "type": "number",
           "label": {
-            "en": "Echo Suppress Window (ms)"
+            "en": "Echo Suppress Window (ms)",
+            "nl": "Echosuppressievenster (ms)",
+            "de": "Echo-Unterdrückungsfenster (ms)",
+            "fr": "Fenêtre de suppression d'écho (ms)",
+            "es": "Ventana de supresión de eco (ms)",
+            "it": "Finestra di soppressione eco (ms)",
+            "pt": "Janela de supressão de eco (ms)"
           },
           "hint": {
-            "en": "How long to ignore echoes after setting a device. Prevents feedback loops."
+            "en": "How long to ignore echoes after setting a device. Prevents feedback loops.",
+            "nl": "Hoe lang echo's te negeren na het instellen van een apparaat. Voorkomt feedbacklussen.",
+            "de": "Wie lange Echos nach dem Setzen eines Geräts ignoriert werden. Verhindert Rückkopplungsschleifen.",
+            "fr": "Durée pendant laquelle ignorer les échos après avoir défini un appareil. Évite les boucles de rétroaction.",
+            "es": "Cuánto tiempo ignorar los ecos tras configurar un dispositivo. Evita los bucles de retroalimentación.",
+            "it": "Per quanto tempo ignorare gli echi dopo aver impostato un dispositivo. Previene i loop di feedback.",
+            "pt": "Por quanto tempo ignorar ecos após configurar um dispositivo. Evita loops de feedback."
           },
           "value": 2000,
           "attr": {
@@ -152,7 +194,13 @@
           "id": "debug",
           "type": "checkbox",
           "label": {
-            "en": "Enable Debug Logging"
+            "en": "Enable Debug Logging",
+            "nl": "Foutopsporing inschakelen",
+            "de": "Debug-Protokollierung aktivieren",
+            "fr": "Activer la journalisation de débogage",
+            "es": "Habilitar registro de depuración",
+            "it": "Abilita registrazione debug",
+            "pt": "Ativar log de depuração"
           },
           "value": false
         },
@@ -160,10 +208,22 @@
           "id": "notify_on_desync",
           "type": "checkbox",
           "label": {
-            "en": "Notify on Desync"
+            "en": "Notify on Desync",
+            "nl": "Melding bij desynchronisatie",
+            "de": "Benachrichtigung bei Desynchronisation",
+            "fr": "Notifier en cas de désynchronisation",
+            "es": "Notificar en caso de desincronización",
+            "it": "Notifica in caso di desincronizzazione",
+            "pt": "Notificar em caso de dessincronização"
           },
           "hint": {
-            "en": "Send a notification when a device fails to reach the expected state."
+            "en": "Send a notification when a device fails to reach the expected state.",
+            "nl": "Stuur een melding wanneer een apparaat de verwachte staat niet bereikt.",
+            "de": "Sende eine Benachrichtigung, wenn ein Gerät den erwarteten Zustand nicht erreicht.",
+            "fr": "Envoyer une notification lorsqu'un appareil n'atteint pas l'état attendu.",
+            "es": "Enviar una notificación cuando un dispositivo no alcanza el estado esperado.",
+            "it": "Invia una notifica quando un dispositivo non raggiunge lo stato atteso.",
+            "pt": "Enviar uma notificação quando um dispositivo não atingir o estado esperado."
           },
           "value": true
         }

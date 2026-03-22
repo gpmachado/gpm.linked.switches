@@ -1,0 +1,12 @@
+{
+  "drivers": {
+    "switch-sync": {
+      "name": "Grupo de interruptores vinculados",
+      "pair": {
+        "start": {
+          "title": "Crear grupo de interruptores"
+        }
+      }
+    }
+  }
+}
