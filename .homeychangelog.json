@@ -4,5 +4,8 @@
   },
   "1.0.1": {
     "en": "adjust description. "
+  },
+  "1.0.3": {
+    "en": "Fixed: virtual switch groups no longer appear as selectable devices when creating a new group"
   }
 }
