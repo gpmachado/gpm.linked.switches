@@ -25,8 +25,7 @@
         "de": "Verbindungsstatus",
         "fr": "État de la liaison",
         "es": "Estado del enlace",
-        "it": "Stato del collegamento",
-        "pt": "Estado do vínculo"
+        "it": "Stato del collegamento"
       }
     }
   },
@@ -56,8 +55,7 @@
         "de": "Verknüpfte Geräte",
         "fr": "Appareils liés",
         "es": "Dispositivos vinculados",
-        "it": "Dispositivi collegati",
-        "pt": "Dispositivos vinculados"
+        "it": "Dispositivi collegati"
       },
       "value": "None"
     },
@@ -70,8 +68,7 @@
         "de": "Echo-Unterdrückungsfenster (ms)",
         "fr": "Fenêtre de suppression d'écho (ms)",
         "es": "Ventana de supresión de eco (ms)",
-        "it": "Finestra di soppressione eco (ms)",
-        "pt": "Janela de supressão de eco (ms)"
+        "it": "Finestra di soppressione eco (ms)"
       },
       "hint": {
         "en": "How long to ignore echoes after setting a device. Prevents feedback loops.",
@@ -79,8 +76,7 @@
         "de": "Wie lange Echos nach dem Setzen eines Geräts ignoriert werden. Verhindert Rückkopplungsschleifen.",
         "fr": "Durée pendant laquelle ignorer les échos après avoir défini un appareil. Évite les boucles de rétroaction.",
         "es": "Cuánto tiempo ignorar los ecos tras configurar un dispositivo. Evita los bucles de retroalimentación.",
-        "it": "Per quanto tempo ignorare gli echi dopo aver impostato un dispositivo. Previene i loop di feedback.",
-        "pt": "Por quanto tempo ignorar ecos após configurar um dispositivo. Evita loops de feedback."
+        "it": "Per quanto tempo ignorare gli echi dopo aver impostato un dispositivo. Previene i loop di feedback."
       },
       "value": 2000,
       "attr": { "min": 500, "max": 10000, "step": 100 }
@@ -94,8 +90,7 @@
         "de": "Debug-Protokollierung aktivieren",
         "fr": "Activer la journalisation de débogage",
         "es": "Habilitar registro de depuración",
-        "it": "Abilita registrazione debug",
-        "pt": "Ativar log de depuração"
+        "it": "Abilita registrazione debug"
       },
       "value": false
     },
@@ -108,8 +103,7 @@
         "de": "Benachrichtigung bei Desynchronisation",
         "fr": "Notifier en cas de désynchronisation",
         "es": "Notificar en caso de desincronización",
-        "it": "Notifica in caso di desincronizzazione",
-        "pt": "Notificar em caso de dessincronização"
+        "it": "Notifica in caso di desincronizzazione"
       },
       "hint": {
         "en": "Send a notification when a device fails to reach the expected state.",
@@ -117,8 +111,7 @@
         "de": "Sende eine Benachrichtigung, wenn ein Gerät den erwarteten Zustand nicht erreicht.",
         "fr": "Envoyer une notification lorsqu'un appareil n'atteint pas l'état attendu.",
         "es": "Enviar una notificación cuando un dispositivo no alcanza el estado esperado.",
-        "it": "Invia una notifica quando un dispositivo non raggiunge lo stato atteso.",
-        "pt": "Enviar uma notificação quando um dispositivo não atingir o estado esperado."
+        "it": "Invia una notifica quando un dispositivo non raggiunge lo stato atteso."
       },
       "value": true
     }

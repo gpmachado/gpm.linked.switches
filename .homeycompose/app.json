@@ -13,8 +13,7 @@
     "de": "Verknüpfte Schalter",
     "fr": "Interrupteurs liés",
     "es": "Interruptores vinculados",
-    "it": "Interruttori collegati",
-    "pt": "Interruptores vinculados"
+    "it": "Interruttori collegati"
   },
   "brandColor": "#E63946",
   "description": {
@@ -23,8 +22,7 @@
     "de": "Verknüpfe und synchronisiere Ein/Aus-Schalter in Gruppen",
     "fr": "Liez et synchronisez des interrupteurs ON/OFF en groupes",
     "es": "Vincula y sincroniza interruptores ON/OFF en grupos",
-    "it": "Collega e sincronizza interruttori ON/OFF in gruppi",
-    "pt": "Vincule e sincronize interruptores Liga/Desliga em grupos"
+    "it": "Collega e sincronizza interruttori ON/OFF in gruppi"
   },
   "category": [
     "tools"
