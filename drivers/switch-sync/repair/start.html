@@ -5,11 +5,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f5f5;
       color: #333;
       padding: 24px;
+      display: flex;
+      flex-direction: column;
     }
 
     h2 { font-size: 18px; margin-bottom: 6px; color: #111; }
@@ -48,7 +54,9 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       background: #fff;
-      max-height: 260px;
+      flex: 1;
+      min-height: 100px;
+      max-height: 40vh;
       overflow-y: auto;
       margin-bottom: 8px;
       margin-top: 8px;
@@ -106,6 +114,7 @@
       cursor: pointer;
       transition: background 0.15s;
       margin-top: 8px;
+      flex-shrink: 0;
     }
 
     button:hover { background: #0062cc; }
@@ -114,30 +123,43 @@
 </head>
 <body>
 
-  <h2>Edit Binding Group</h2>
-  <p class="subtitle" id="device-count">Loading...</p>
+  <h2 id="t-title"></h2>
+  <p class="subtitle" id="device-count"></p>
 
-  <label class="field-label">Devices to Sync</label>
-  <p class="hint">Select at least 2 devices with ON/OFF capability.</p>
+  <label class="field-label" id="t-devices-label"></label>
+  <p class="hint" id="t-hint"></p>
 
   <div class="filter-row">
-    <input type="text" id="filter-text" placeholder="Search by name..." oninput="applyFilter()" />
+    <input type="text" id="filter-text" oninput="applyFilter()" />
     <select id="filter-zone" onchange="applyFilter()">
-      <option value="">All zones</option>
+      <option value="" id="t-all-zones"></option>
     </select>
   </div>
 
   <div id="device-list">
-    <div id="loading">Loading devices...</div>
+    <div id="loading"></div>
   </div>
 
   <div id="error-msg"></div>
 
-  <button id="btn-save" onclick="saveBinding()" disabled>Save Changes</button>
+  <button id="btn-save" onclick="saveBinding()" disabled></button>
 
   <script>
     var availableDevices = [];
-    var selectedIds = {}; // id → true (persists across filter redraws)
+    var selectedIds = {};
+
+    var __ = function(k) { try { return Homey.__(k) || k; } catch(e) { return k; } };
+
+    function initTranslations() {
+      document.getElementById('t-title').textContent         = __('repair.title');
+      document.getElementById('t-devices-label').textContent = __('wizard.devices_to_sync');
+      document.getElementById('t-hint').textContent          = __('wizard.hint_min2');
+      document.getElementById('t-all-zones').textContent     = __('wizard.all_zones');
+      document.getElementById('loading').textContent         = __('wizard.loading');
+      document.getElementById('btn-save').textContent        = __('repair.btn_save');
+      document.getElementById('filter-text').placeholder     = __('wizard.search_placeholder');
+      updateCount();
+    }
 
     function showError(msg) {
       var el = document.getElementById('error-msg');
@@ -177,11 +199,11 @@
     function renderDevices(devices) {
       var list = document.getElementById('device-list');
       if (devices.length === 0) {
-        list.innerHTML = '<div id="loading">No devices match the filter.</div>';
+        list.innerHTML = '<div id="loading">' + __('wizard.no_match') + '</div>';
         return;
       }
       list.innerHTML = devices.map(function(d) {
-        var checked = selectedIds[d.id] ? ' checked' : '';
+        var checked  = selectedIds[d.id] ? ' checked' : '';
         var selClass = selectedIds[d.id] ? ' selected' : '';
         var zoneBadge = d.zoneName ? '<span class="device-zone">' + d.zoneName + '</span>' : '';
         return '<label class="device-item' + selClass + '" id="item-' + d.id + '">' +
@@ -194,7 +216,7 @@
 
     function updateCount() {
       var n = Object.keys(selectedIds).length;
-      document.getElementById('device-count').textContent = n + ' device' + (n !== 1 ? 's' : '') + ' selected';
+      document.getElementById('device-count').textContent = n + ' ' + (n !== 1 ? __('wizard.devices') : __('wizard.device')) + ' ' + __('wizard.selected');
     }
 
     function onCheckChange(checkbox) {
@@ -213,17 +235,19 @@
     function saveBinding() {
       showError('');
       var deviceIds = Object.keys(selectedIds);
-      if (deviceIds.length < 2) { showError('Please select at least 2 devices.'); return; }
+      if (deviceIds.length < 2) { showError(__('wizard.err_min2')); return; }
 
       document.getElementById('btn-save').disabled = true;
 
       Homey.emit('save_config', { deviceIds: deviceIds })
         .then(function() { Homey.done(); })
         .catch(function(err) {
-          showError((err && err.message) || 'Error saving binding.');
+          showError((err && err.message) || __('repair.err_save'));
           document.getElementById('btn-save').disabled = false;
         });
     }
+
+    initTranslations();
 
     Homey.emit('get_config', null)
       .then(function(config) {
@@ -237,8 +261,8 @@
         renderDevices(availableDevices);
         document.getElementById('btn-save').disabled = false;
       })
-      .catch(function() {
-        document.getElementById('loading').textContent = 'Error loading configuration.';
+      .catch(function(err) {
+        document.getElementById('loading').textContent = __('repair.err_load') + (err && err.message ? ': ' + err.message : '');
       });
   </script>
 

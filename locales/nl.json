@@ -1,12 +1,29 @@
 {
-  "drivers": {
-    "switch-sync": {
-      "name": "Gekoppelde schakelaargroep",
-      "pair": {
-        "start": {
-          "title": "Schakelaargroep aanmaken"
-        }
-      }
-    }
+  "wizard": {
+    "group_name": "Groepsnaam",
+    "devices_to_sync": "Te synchroniseren apparaten",
+    "hint_min2": "Selecteer minimaal 2 apparaten met AAN/UIT-functie.",
+    "search_placeholder": "Zoeken op naam...",
+    "all_zones": "Alle zones",
+    "loading": "Apparaten laden...",
+    "no_match": "Geen apparaten gevonden voor dit filter.",
+    "err_min2": "Selecteer minimaal 2 apparaten.",
+    "device": "apparaat",
+    "devices": "apparaten",
+    "selected": "geselecteerd"
+  },
+  "pair": {
+    "title": "Schakelaargroep aanmaken",
+    "name_placeholder": "bijv. Trappenhuis",
+    "btn_create": "Groep aanmaken",
+    "err_name": "Voer een groepsnaam in.",
+    "err_create": "Fout bij aanmaken van de groep.",
+    "err_load": "Fout bij laden van apparaten."
+  },
+  "repair": {
+    "title": "Schakelaargroep bewerken",
+    "btn_save": "Wijzigingen opslaan",
+    "err_save": "Fout bij opslaan van de groep.",
+    "err_load": "Fout bij laden van de configuratie."
   }
 }

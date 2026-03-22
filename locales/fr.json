@@ -1,12 +1,29 @@
 {
-  "drivers": {
-    "switch-sync": {
-      "name": "Groupe d'interrupteurs liés",
-      "pair": {
-        "start": {
-          "title": "Créer un groupe d'interrupteurs"
-        }
-      }
-    }
+  "wizard": {
+    "group_name": "Nom du groupe",
+    "devices_to_sync": "Appareils à synchroniser",
+    "hint_min2": "Sélectionnez au moins 2 appareils avec fonction ON/OFF.",
+    "search_placeholder": "Rechercher par nom...",
+    "all_zones": "Toutes les zones",
+    "loading": "Chargement des appareils...",
+    "no_match": "Aucun appareil ne correspond au filtre.",
+    "err_min2": "Veuillez sélectionner au moins 2 appareils.",
+    "device": "appareil",
+    "devices": "appareils",
+    "selected": "sélectionné(s)"
+  },
+  "pair": {
+    "title": "Créer un groupe d'interrupteurs",
+    "name_placeholder": "ex. Escalier",
+    "btn_create": "Créer le groupe",
+    "err_name": "Veuillez entrer un nom de groupe.",
+    "err_create": "Erreur lors de la création du groupe.",
+    "err_load": "Erreur lors du chargement des appareils."
+  },
+  "repair": {
+    "title": "Modifier le groupe d'interrupteurs",
+    "btn_save": "Enregistrer les modifications",
+    "err_save": "Erreur lors de l'enregistrement du groupe.",
+    "err_load": "Erreur lors du chargement de la configuration."
   }
 }

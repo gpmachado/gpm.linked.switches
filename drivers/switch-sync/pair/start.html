@@ -5,11 +5,17 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f5f5;
       color: #333;
       padding: 24px;
+      display: flex;
+      flex-direction: column;
     }
 
     h2 { font-size: 18px; margin-bottom: 20px; color: #111; }
@@ -50,7 +56,9 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       background: #fff;
-      max-height: 260px;
+      flex: 1;
+      min-height: 100px;
+      max-height: 40vh;
       overflow-y: auto;
       margin-bottom: 8px;
       margin-top: 8px;
@@ -108,6 +116,7 @@
       cursor: pointer;
       transition: background 0.15s;
       margin-top: 8px;
+      flex-shrink: 0;
     }
 
     button:hover { background: #0062cc; }
@@ -116,31 +125,46 @@
 </head>
 <body>
 
-  <h2>Create Switch Sync Group</h2>
+  <h2 id="t-title"></h2>
 
-  <label class="field-label">Group Name</label>
-  <input type="text" id="name" placeholder="e.g. Staircase" value="My Binding" />
+  <label class="field-label" id="t-group-name"></label>
+  <input type="text" id="name" value="My Binding" />
 
-  <label class="field-label">Devices to Sync</label>
-  <p class="hint">Select at least 2 devices with ON/OFF capability.</p>
+  <label class="field-label" id="t-devices-label"></label>
+  <p class="hint" id="t-hint"></p>
 
   <div class="filter-row">
-    <input type="text" id="filter-text" placeholder="Search by name..." oninput="applyFilter()" />
+    <input type="text" id="filter-text" oninput="applyFilter()" />
     <select id="filter-zone" onchange="applyFilter()">
-      <option value="">All zones</option>
+      <option value="" id="t-all-zones"></option>
     </select>
   </div>
 
   <div id="device-list">
-    <div id="loading">Loading devices...</div>
+    <div id="loading"></div>
   </div>
 
   <div id="error-msg"></div>
 
-  <button id="btn-create" onclick="createBinding()" disabled>Create Binding Group</button>
+  <button id="btn-create" onclick="createBinding()" disabled></button>
 
   <script>
     var availableDevices = [];
+
+    // i18n helpers
+    var __ = function(k) { try { return Homey.__(k) || k; } catch(e) { return k; } };
+
+    function initTranslations() {
+      document.getElementById('t-title').textContent        = __('pair.title');
+      document.getElementById('t-group-name').textContent   = __('wizard.group_name');
+      document.getElementById('t-devices-label').textContent = __('wizard.devices_to_sync');
+      document.getElementById('t-hint').textContent          = __('wizard.hint_min2');
+      document.getElementById('t-all-zones').textContent     = __('wizard.all_zones');
+      document.getElementById('loading').textContent         = __('wizard.loading');
+      document.getElementById('btn-create').textContent      = __('pair.btn_create');
+      document.getElementById('name').placeholder            = __('pair.name_placeholder');
+      document.getElementById('filter-text').placeholder     = __('wizard.search_placeholder');
+    }
 
     function showError(msg) {
       var el = document.getElementById('error-msg');
@@ -173,9 +197,8 @@
       var zoneId = document.getElementById('filter-zone').value;
 
       var filtered = availableDevices.filter(function(d) {
-        var matchText = !text || d.name.toLowerCase().includes(text);
-        var matchZone = !zoneId || d.zoneId === zoneId;
-        return matchText && matchZone;
+        return (!text || d.name.toLowerCase().includes(text)) &&
+               (!zoneId || d.zoneId === zoneId);
       });
 
       renderDevices(filtered);
@@ -184,7 +207,7 @@
     function renderDevices(devices) {
       var list = document.getElementById('device-list');
       if (devices.length === 0) {
-        list.innerHTML = '<div id="loading">No devices match the filter.</div>';
+        list.innerHTML = '<div id="loading">' + __('wizard.no_match') + '</div>';
         return;
       }
 
@@ -194,9 +217,9 @@
       });
 
       list.innerHTML = devices.map(function(d) {
-        var isChecked = checked[d.id] ? ' checked' : '';
+        var isChecked  = checked[d.id] ? ' checked' : '';
         var isSelected = checked[d.id] ? ' selected' : '';
-        var zoneBadge = d.zoneName ? '<span class="device-zone">' + d.zoneName + '</span>' : '';
+        var zoneBadge  = d.zoneName ? '<span class="device-zone">' + d.zoneName + '</span>' : '';
         return '<label class="device-item' + isSelected + '" id="item-' + d.id + '">' +
           '<input type="checkbox" value="' + d.id + '"' + isChecked + ' onchange="onCheckChange(this)" />' +
           '<span class="device-name">' + d.name + '</span>' +
@@ -224,18 +247,20 @@
       var name = document.getElementById('name').value.trim();
       var deviceIds = getSelectedIds();
 
-      if (!name) { showError('Please enter a group name.'); return; }
-      if (deviceIds.length < 2) { showError('Please select at least 2 devices.'); return; }
+      if (!name)                { showError(__('pair.err_name')); return; }
+      if (deviceIds.length < 2) { showError(__('wizard.err_min2')); return; }
 
       document.getElementById('btn-create').disabled = true;
 
       Homey.emit('configure_binding', { name: name, deviceIds: deviceIds })
         .then(function() { Homey.nextView(); })
         .catch(function(err) {
-          showError((err && err.message) || 'Error creating binding.');
+          showError((err && err.message) || __('pair.err_create'));
           document.getElementById('btn-create').disabled = false;
         });
     }
+
+    initTranslations();
 
     Homey.emit('get_available_devices', null)
       .then(function(devices) {
@@ -244,8 +269,8 @@
         renderDevices(availableDevices);
         document.getElementById('btn-create').disabled = false;
       })
-      .catch(function() {
-        document.getElementById('loading').textContent = 'Error loading devices.';
+      .catch(function(err) {
+        document.getElementById('loading').textContent = __('pair.err_load') + (err && err.message ? ': ' + err.message : '');
       });
   </script>
 

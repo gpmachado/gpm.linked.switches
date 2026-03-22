@@ -1,50 +1,29 @@
 {
-  "drivers": {
-    "switch-sync": {
-      "name": "Switch Sync Group",
-      "settings": {
-        "mode": {
-          "label": "Sync Mode",
-          "hint": "Bidirectional: any device triggers all. Master Only: only the first selected device triggers others."
-        },
-        "suppress_ms": {
-          "label": "Echo Suppress Window (ms)",
-          "hint": "How long to ignore echoes after setting a device. Prevents feedback loops."
-        }
-      },
-      "pair": {
-        "start": {
-          "title": "Create Switch Sync Group"
-        }
-      }
-    }
+  "wizard": {
+    "group_name": "Group Name",
+    "devices_to_sync": "Devices to Sync",
+    "hint_min2": "Select at least 2 devices with ON/OFF capability.",
+    "search_placeholder": "Search by name...",
+    "all_zones": "All zones",
+    "loading": "Loading devices...",
+    "no_match": "No devices match the filter.",
+    "err_min2": "Please select at least 2 devices.",
+    "device": "device",
+    "devices": "devices",
+    "selected": "selected"
   },
-  "flow": {
-    "triggers": {
-      "binding_turned_on": {
-        "title": "A binding group turned on",
-        "titleFormatted": "[[device]] turned on"
-      },
-      "binding_turned_off": {
-        "title": "A binding group turned off",
-        "titleFormatted": "[[device]] turned off"
-      }
-    },
-    "conditions": {
-      "binding_is_on": {
-        "title": "Binding group is on",
-        "titleFormatted": "[[device]] is on"
-      }
-    },
-    "actions": {
-      "set_binding_on": {
-        "title": "Turn binding group on",
-        "titleFormatted": "Turn [[device]] on"
-      },
-      "set_binding_off": {
-        "title": "Turn binding group off",
-        "titleFormatted": "Turn [[device]] off"
-      }
-    }
+  "pair": {
+    "title": "Create Switch Sync Group",
+    "name_placeholder": "e.g. Staircase",
+    "btn_create": "Create Binding Group",
+    "err_name": "Please enter a group name.",
+    "err_create": "Error creating binding.",
+    "err_load": "Error loading devices."
+  },
+  "repair": {
+    "title": "Edit Binding Group",
+    "btn_save": "Save Changes",
+    "err_save": "Error saving binding.",
+    "err_load": "Error loading configuration."
   }
 }

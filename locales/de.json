@@ -1,12 +1,29 @@
 {
-  "drivers": {
-    "switch-sync": {
-      "name": "Verknüpfte Schaltergruppe",
-      "pair": {
-        "start": {
-          "title": "Schaltergruppe erstellen"
-        }
-      }
-    }
+  "wizard": {
+    "group_name": "Gruppenname",
+    "devices_to_sync": "Zu synchronisierende Geräte",
+    "hint_min2": "Wähle mindestens 2 Geräte mit EIN/AUS-Funktion.",
+    "search_placeholder": "Nach Name suchen...",
+    "all_zones": "Alle Zonen",
+    "loading": "Geräte werden geladen...",
+    "no_match": "Keine Geräte für diesen Filter gefunden.",
+    "err_min2": "Bitte mindestens 2 Geräte auswählen.",
+    "device": "Gerät",
+    "devices": "Geräte",
+    "selected": "ausgewählt"
+  },
+  "pair": {
+    "title": "Schaltergruppe erstellen",
+    "name_placeholder": "z.B. Treppenhaus",
+    "btn_create": "Gruppe erstellen",
+    "err_name": "Bitte einen Gruppennamen eingeben.",
+    "err_create": "Fehler beim Erstellen der Gruppe.",
+    "err_load": "Fehler beim Laden der Geräte."
+  },
+  "repair": {
+    "title": "Schaltergruppe bearbeiten",
+    "btn_save": "Änderungen speichern",
+    "err_save": "Fehler beim Speichern der Gruppe.",
+    "err_load": "Fehler beim Laden der Konfiguration."
   }
 }
