@@ -125,6 +125,14 @@ class SwitchSyncDevice extends Device {
     } finally {
       this._isBootSync = false;
     }
+
+    // Align diverging devices to the virtual state without waiting for user action
+    const targetValue = this.getCapabilityValue('onoff');
+    const hasDiverging = [...this._listeners.values()].some(({ onoffInstance }) => onoffInstance.value !== targetValue);
+    if (hasDiverging) {
+      this.log(`[${this.getName()}] Boot align: propagating ${targetValue ? 'ON' : 'OFF'} to diverging devices`);
+      await this._propagate(targetValue, null);
+    }
   }
 
   // ─── Sub-capabilities (device names on card) ──────────────────────────────
@@ -350,12 +358,24 @@ class SwitchSyncDevice extends Device {
   // ─── Notify desync — once per device until resolved ──────────────────────
 
   async _notifyDesynced(desynced) {
-    if (!this.getSetting('notify_on_desync')) return;
-
     const newDesyncs = desynced.filter(d => !this._notifiedDesyncs.has(d.deviceId));
     if (newDesyncs.length === 0) return;
 
     newDesyncs.forEach(d => this._notifiedDesyncs.add(d.deviceId));
+
+    // Always write to the global log
+    for (const d of newDesyncs) {
+      this.homey.app.addDesyncLog({
+        timestamp: new Date().toISOString(),
+        group:     this.getName(),
+        device:    d.name,
+        expected:  d.expected,
+        actual:    d.actual,
+      });
+    }
+
+    // Push notification — only if setting is enabled
+    if (!this.getSetting('notify_on_desync')) return;
 
     const names = newDesyncs.map(d =>
       `${d.name} (is ${d.actual ? 'ON' : 'OFF'}, expected ${d.expected ? 'ON' : 'OFF'})`

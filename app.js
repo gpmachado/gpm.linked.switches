@@ -17,6 +17,13 @@ module.exports = class SwitchSyncApp extends Homey.App {
     return this._homeyAPI;
   }
 
+  addDesyncLog(entry) {
+    const log = this.homey.settings.get('desyncLog') || [];
+    log.unshift(entry);
+    if (log.length > 100) log.length = 100;
+    this.homey.settings.set('desyncLog', log);
+  }
+
   // Returns all devices with onoff capability, excluding our own driver, with zone info
   async getDevicesWithOnOff() {
     const api = await this.getHomeyAPI();
