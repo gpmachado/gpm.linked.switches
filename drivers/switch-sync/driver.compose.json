@@ -5,8 +5,7 @@
     "de": "Verknüpfte Schaltergruppe",
     "fr": "Groupe d'interrupteurs liés",
     "es": "Grupo de interruptores vinculados",
-    "it": "Gruppo di interruttori collegati",
-    "pt": "Grupo de interruptores vinculados"
+    "it": "Gruppo di interruttori collegati"
   },
   "images": {
     "small": "/drivers/switch-sync/assets/images/small.png",

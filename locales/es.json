@@ -25,5 +25,14 @@
     "btn_save": "Guardar cambios",
     "err_save": "Error al guardar el grupo.",
     "err_load": "Error al cargar la configuración."
+  },
+  "settings": {
+    "log_title": "Registro de desincronización",
+    "copy": "Copiar al portapapeles",
+    "clear": "Limpiar registro",
+    "loading": "Cargando...",
+    "empty": "No se han registrado eventos de desincronización.",
+    "expected": "Esperado",
+    "actual": "Real"
   }
 }

@@ -25,5 +25,14 @@
     "btn_save": "Enregistrer les modifications",
     "err_save": "Erreur lors de l'enregistrement du groupe.",
     "err_load": "Erreur lors du chargement de la configuration."
+  },
+  "settings": {
+    "log_title": "Journal de désynchronisation",
+    "copy": "Copier dans le presse-papiers",
+    "clear": "Effacer le journal",
+    "loading": "Chargement...",
+    "empty": "Aucun événement de désynchronisation enregistré.",
+    "expected": "Attendu",
+    "actual": "Réel"
   }
 }

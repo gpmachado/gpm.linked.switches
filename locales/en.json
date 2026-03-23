@@ -25,5 +25,14 @@
     "btn_save": "Save Changes",
     "err_save": "Error saving binding.",
     "err_load": "Error loading configuration."
+  },
+  "settings": {
+    "log_title": "Desync Log",
+    "copy": "Copy to Clipboard",
+    "clear": "Clear Log",
+    "loading": "Loading...",
+    "empty": "No desync events recorded.",
+    "expected": "Expected",
+    "actual": "Actual"
   }
 }

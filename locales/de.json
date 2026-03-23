@@ -25,5 +25,14 @@
     "btn_save": "Änderungen speichern",
     "err_save": "Fehler beim Speichern der Gruppe.",
     "err_load": "Fehler beim Laden der Konfiguration."
+  },
+  "settings": {
+    "log_title": "Desynchronisierungs-Log",
+    "copy": "In Zwischenablage kopieren",
+    "clear": "Log löschen",
+    "loading": "Laden...",
+    "empty": "Keine Desynchronisierungsereignisse aufgezeichnet.",
+    "expected": "Erwartet",
+    "actual": "Tatsächlich"
   }
 }

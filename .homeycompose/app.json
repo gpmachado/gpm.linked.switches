@@ -8,12 +8,7 @@
     "local"
   ],
   "name": {
-    "en": "Linked Switches",
-    "nl": "Gekoppelde schakelaars",
-    "de": "Verknüpfte Schalter",
-    "fr": "Interrupteurs liés",
-    "es": "Interruptores vinculados",
-    "it": "Interruttori collegati"
+    "en": "Linked Switches"
   },
   "brandColor": "#E63946",
   "description": {

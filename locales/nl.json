@@ -25,5 +25,14 @@
     "btn_save": "Wijzigingen opslaan",
     "err_save": "Fout bij opslaan van de groep.",
     "err_load": "Fout bij laden van de configuratie."
+  },
+  "settings": {
+    "log_title": "Desynchroon-log",
+    "copy": "Kopieer naar klembord",
+    "clear": "Log wissen",
+    "loading": "Laden...",
+    "empty": "Geen desynchroon-gebeurtenissen geregistreerd.",
+    "expected": "Verwacht",
+    "actual": "Werkelijk"
   }
 }

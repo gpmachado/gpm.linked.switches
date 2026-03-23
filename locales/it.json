@@ -25,5 +25,14 @@
     "btn_save": "Salva modifiche",
     "err_save": "Errore durante il salvataggio del gruppo.",
     "err_load": "Errore durante il caricamento della configurazione."
+  },
+  "settings": {
+    "log_title": "Registro desincronizzazione",
+    "copy": "Copia negli appunti",
+    "clear": "Cancella registro",
+    "loading": "Caricamento...",
+    "empty": "Nessun evento di desincronizzazione registrato.",
+    "expected": "Atteso",
+    "actual": "Effettivo"
   }
 }

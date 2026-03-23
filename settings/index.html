@@ -39,14 +39,14 @@
 </head>
 <body>
 
-  <h2>Desync Log</h2>
+  <h2 id="lbl-title"></h2>
 
   <div class="actions">
-    <button id="btn-copy">Copy to Clipboard</button>
-    <button id="btn-clear" class="danger">Clear Log</button>
+    <button id="btn-copy"></button>
+    <button id="btn-clear" class="danger"></button>
   </div>
 
-  <div id="log-list"><div class="empty">Loading…</div></div>
+  <div id="log-list"><div class="empty" id="lbl-loading"></div></div>
 
   <script src="/homey.js" data-origin="settings"></script>
   <script>
@@ -57,34 +57,35 @@
       return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
     }
 
-    function render(log) {
-      currentLog = log || [];
-      var list = document.getElementById('log-list');
-      if (currentLog.length === 0) {
-        list.innerHTML = '<div class="empty">No desync events recorded.</div>';
-        return;
-      }
-      list.innerHTML = currentLog.map(function(e) {
-        return '<div class="log-entry">' +
-          '<div class="ts">' + formatTs(e.timestamp) + '</div>' +
-          '<div><strong>' + e.group + '</strong> — ' + e.device + '</div>' +
-          '<div class="state">Expected: ' + (e.expected ? 'ON' : 'OFF') +
-          '  ·  Actual: ' + (e.actual ? 'ON' : 'OFF') + '</div>' +
-          '</div>';
-      }).join('');
-    }
-
     function onHomeyReady(Homey) {
       Homey.ready();
 
-      Homey.get('desyncLog', function(err, log) {
-        render(log);
-      });
+      document.getElementById('lbl-title').textContent   = Homey.__('settings.log_title');
+      document.getElementById('btn-copy').textContent    = Homey.__('settings.copy');
+      document.getElementById('btn-clear').textContent   = Homey.__('settings.clear');
+      document.getElementById('lbl-loading').textContent = Homey.__('settings.loading');
+
+      function render(log) {
+        currentLog = log || [];
+        var list = document.getElementById('log-list');
+        if (currentLog.length === 0) {
+          list.innerHTML = '<div class="empty">' + Homey.__('settings.empty') + '</div>';
+          return;
+        }
+        list.innerHTML = currentLog.map(function(e) {
+          return '<div class="log-entry">' +
+            '<div class="ts">' + formatTs(e.timestamp) + '</div>' +
+            '<div><strong>' + e.group + '</strong> — ' + e.device + '</div>' +
+            '<div class="state">' + Homey.__('settings.expected') + ': ' + (e.expected ? 'ON' : 'OFF') +
+            '  ·  ' + Homey.__('settings.actual') + ': ' + (e.actual ? 'ON' : 'OFF') + '</div>' +
+            '</div>';
+        }).join('');
+      }
+
+      Homey.get('desyncLog', function(err, log) { render(log); });
 
       document.getElementById('btn-clear').addEventListener('click', function() {
-        Homey.set('desyncLog', [], function(err) {
-          if (!err) render([]);
-        });
+        Homey.set('desyncLog', [], function(err) { if (!err) render([]); });
       });
 
       document.getElementById('btn-copy').addEventListener('click', function() {
@@ -96,7 +97,6 @@
         }).join('\n');
         if (navigator.clipboard) navigator.clipboard.writeText(text);
       });
-
     }
   </script>
 </body>
