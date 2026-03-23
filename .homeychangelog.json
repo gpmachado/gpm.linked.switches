@@ -10,5 +10,8 @@
   },
   "1.0.4": {
     "en": "Add Translations"
+  },
+  "1.0.5": {
+    "en": "Added desync log in app settings (Configure) to diagnose sync issues over time "
   }
 }
