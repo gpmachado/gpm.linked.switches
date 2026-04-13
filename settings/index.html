@@ -95,7 +95,19 @@
             ' | expected:' + (e.expected ? 'ON' : 'OFF') +
             ' actual:' + (e.actual ? 'ON' : 'OFF');
         }).join('\n');
-        if (navigator.clipboard) navigator.clipboard.writeText(text);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text);
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
       });
     }
   </script>

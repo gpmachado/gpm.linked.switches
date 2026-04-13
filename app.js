@@ -18,10 +18,18 @@ module.exports = class SwitchSyncApp extends Homey.App {
   }
 
   addDesyncLog(entry) {
-    const log = this.homey.settings.get('desyncLog') || [];
-    log.unshift(entry);
-    if (log.length > 100) log.length = 100;
-    this.homey.settings.set('desyncLog', log);
+    if (!this._desyncLog) {
+      this._desyncLog = this.homey.settings.get('desyncLog') || [];
+    }
+    this._desyncLog.unshift(entry);
+    if (this._desyncLog.length > 100) this._desyncLog.length = 100;
+
+    // Debounce flash writes — max once per minute regardless of flapping
+    if (this._desyncLogTimer) return;
+    this._desyncLogTimer = this.homey.setTimeout(() => {
+      this._desyncLogTimer = null;
+      this.homey.settings.set('desyncLog', this._desyncLog);
+    }, 60000);
   }
 
   // Returns all devices with onoff capability, excluding our own driver, with zone info

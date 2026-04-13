@@ -26,6 +26,10 @@
     "err_save": "Fehler beim Speichern der Gruppe.",
     "err_load": "Fehler beim Laden der Konfiguration."
   },
+  "error": {
+    "missing_devices": "verknüpfte(s) Gerät(e) nicht mehr gefunden. Bitte diese Gruppe reparieren.",
+    "min_devices": "Gruppe benötigt mindestens 2 Geräte. Bitte diese Gruppe reparieren."
+  },
   "settings": {
     "log_title": "Desynchronisierungs-Log",
     "copy": "In Zwischenablage kopieren",

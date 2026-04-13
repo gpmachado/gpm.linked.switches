@@ -26,6 +26,10 @@
     "err_save": "Fout bij opslaan van de groep.",
     "err_load": "Fout bij laden van de configuratie."
   },
+  "error": {
+    "missing_devices": "gekoppeld(e) apparaat/apparaten niet meer gevonden. Herstel deze groep.",
+    "min_devices": "Groep heeft minimaal 2 apparaten nodig. Herstel deze groep."
+  },
   "settings": {
     "log_title": "Desynchroon-log",
     "copy": "Kopieer naar klembord",

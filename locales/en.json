@@ -26,6 +26,10 @@
     "err_save": "Error saving binding.",
     "err_load": "Error loading configuration."
   },
+  "error": {
+    "missing_devices": "linked device(s) no longer found. Please repair this group.",
+    "min_devices": "Group needs at least 2 devices. Please repair this group."
+  },
   "settings": {
     "log_title": "Desync Log",
     "copy": "Copy to Clipboard",

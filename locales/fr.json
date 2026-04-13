@@ -26,6 +26,10 @@
     "err_save": "Erreur lors de l'enregistrement du groupe.",
     "err_load": "Erreur lors du chargement de la configuration."
   },
+  "error": {
+    "missing_devices": "appareil(s) lié(s) introuvable(s). Veuillez réparer ce groupe.",
+    "min_devices": "Le groupe nécessite au moins 2 appareils. Veuillez réparer ce groupe."
+  },
   "settings": {
     "log_title": "Journal de désynchronisation",
     "copy": "Copier dans le presse-papiers",

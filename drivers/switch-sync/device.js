@@ -46,10 +46,13 @@ class SwitchSyncDevice extends Device {
 
     await this._subscribeToDevices();
 
-    this._healthInterval = this.homey.setInterval(
-      () => this._verifyGroupHealth().catch(err => this.error(`[${this.getName()}] Health check error: ${err.message}`)),
-      HEALTH_INTERVAL_MS,
-    );
+    const jitter = Math.random() * 10000;
+    this.homey.setTimeout(() => {
+      this._healthInterval = this.homey.setInterval(
+        () => this._verifyGroupHealth().catch(err => this.error(`[${this.getName()}] Health check error: ${err.message}`)),
+        HEALTH_INTERVAL_MS,
+      );
+    }, jitter);
   }
 
   async reloadConfiguration() {
@@ -81,6 +84,7 @@ class SwitchSyncDevice extends Device {
 
     const deviceIds = this.getStoreValue('deviceIds') || [];
     const api = await this._api();
+    let missingCount = 0;
 
     for (const deviceId of deviceIds) {
       try {
@@ -97,7 +101,16 @@ class SwitchSyncDevice extends Device {
         this.log(`[${this.getName()}] Subscribed to "${name}"`);
       } catch (err) {
         this.error(`[${this.getName()}] Could not subscribe "${deviceId}": ${err.message}`);
+        missingCount++;
       }
+    }
+
+    if (missingCount > 0) {
+      await this.setUnavailable(`${missingCount} ${this.homey.__('error.missing_devices')}`).catch(() => {});
+    } else if (this._listeners.size < 2) {
+      await this.setUnavailable(this.homey.__('error.min_devices')).catch(() => {});
+    } else {
+      await this.setAvailable().catch(() => {});
     }
 
     await this._syncSubCapabilities(deviceIds);
@@ -336,6 +349,7 @@ class SwitchSyncDevice extends Device {
 
     for (const [deviceId, { device, onoffInstance }] of this._listeners) {
       if (!device.available) continue; // Offline devices are tracked via _pendingOffline
+      if (this._expectedStates.has(deviceId)) continue; // Propagation in progress, skip
       if (onoffInstance.value !== virtualValue) {
         desynced.push({ deviceId, name: device.name, expected: virtualValue, actual: onoffInstance.value });
       }

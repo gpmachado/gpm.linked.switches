@@ -26,6 +26,10 @@
     "err_save": "Errore durante il salvataggio del gruppo.",
     "err_load": "Errore durante il caricamento della configurazione."
   },
+  "error": {
+    "missing_devices": "dispositivo/i collegato/i non trovato/i. Ripara questo gruppo.",
+    "min_devices": "Il gruppo richiede almeno 2 dispositivi. Ripara questo gruppo."
+  },
   "settings": {
     "log_title": "Registro desincronizzazione",
     "copy": "Copia negli appunti",
