@@ -13,5 +13,8 @@
   },
   "1.0.5": {
     "en": "Added desync log in app settings (Configure) to diagnose sync issues over time "
+  },
+  "1.0.6": {
+    "en": "Desync log page in app settings (Configure) — view, copy and clear sync failure history"
   }
 }
