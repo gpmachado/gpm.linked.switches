@@ -16,5 +16,8 @@
   },
   "1.0.6": {
     "en": "Desync log page in app settings (Configure) — view, copy and clear sync failure history"
+  },
+  "1.0.7": {
+    "en": "Sync log now shows who triggered each action, timing per device, and filter All / Errors"
   }
 }
