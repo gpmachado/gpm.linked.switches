@@ -26,6 +26,24 @@
     "err_save": "Erreur lors de l'enregistrement du groupe.",
     "err_load": "Erreur lors du chargement de la configuration."
   },
+  "device_settings": {
+    "section_devices": "Interrupteurs liés",
+    "section_advanced": "Avancé",
+    "loading": "Chargement…",
+    "no_devices": "Aucun appareil lié pour l'instant.",
+    "switches_linked_singular": "interrupteur lié",
+    "switches_linked_plural": "interrupteurs liés",
+    "suppress_label": "Fenêtre de suppression d'écho",
+    "suppress_hint": "Ignorer les échos après l'envoi d'une commande (ms)",
+    "notify_label": "Notifier en cas de désynchronisation",
+    "notify_hint": "Envoyer une notification push si un appareil ne se synchronise pas",
+    "debug_label": "Journal de débogage",
+    "debug_hint": "Écrire des journaux détaillés dans la console de l'app",
+    "save": "Enregistrer",
+    "saved": "Enregistré ✓",
+    "err_save": "Erreur lors de l'enregistrement des paramètres.",
+    "err_suppress_range": "La fenêtre de suppression doit être de 500 à 10000 ms."
+  },
   "error": {
     "missing_devices": "appareil(s) lié(s) introuvable(s). Veuillez réparer ce groupe.",
     "min_devices": "Le groupe nécessite au moins 2 appareils. Veuillez réparer ce groupe."
@@ -37,6 +55,8 @@
     "loading": "Chargement...",
     "empty": "Aucun événement de désynchronisation enregistré.",
     "expected": "Attendu",
-    "actual": "Réel"
+    "actual": "Réel",
+    "filter_all": "Tout",
+    "filter_errors": "Erreurs"
   }
 }

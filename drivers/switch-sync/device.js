@@ -2,8 +2,9 @@
 
 const { Device } = require('homey');
 
-// How long after a propagation to verify that devices actually changed state
-const VERIFY_DELAY_EXTRA_MS = 1000;
+// Extra time after suppressMs before verifying device states.
+// Covers: Nova retries (~1.5s) + Tuya backoff retries (~2.2s) + Zigbee routing latency (~1s each way)
+const VERIFY_DELAY_EXTRA_MS = 5000;
 
 // Periodic health check interval
 const HEALTH_INTERVAL_MS = 30000;
@@ -24,10 +25,9 @@ class SwitchSyncDevice extends Device {
     this._suppress = new Map();
 
     // Devices offline during propagation: deviceId → targetValue
-    // Resolved when device reconnects via capability callback
     this._pendingOffline = new Map();
 
-    // Health monitor: deviceId → { value, timestamp, verified }
+    // Health monitor: deviceId → { value, timestamp, verified, syncedAt? }
     this._expectedStates = new Map();
 
     // Devices already notified as desynced — avoid notification spam
@@ -39,6 +39,9 @@ class SwitchSyncDevice extends Device {
     // Same-tick dedup
     this._lastPropagatedValue = null;
 
+    // Context for the current propagation batch (used by verify to build report)
+    this._pendingReportContext = null;
+
     // Single verify timer (reset on each propagation, fires once after settle)
     this._verifyTimer = null;
 
@@ -47,7 +50,8 @@ class SwitchSyncDevice extends Device {
     await this._subscribeToDevices();
 
     const jitter = Math.random() * 10000;
-    this.homey.setTimeout(() => {
+    this._healthStartTimer = this.homey.setTimeout(() => {
+      this._healthStartTimer = null;
       this._healthInterval = this.homey.setInterval(
         () => this._verifyGroupHealth().catch(err => this.error(`[${this.getName()}] Health check error: ${err.message}`)),
         HEALTH_INTERVAL_MS,
@@ -76,6 +80,7 @@ class SwitchSyncDevice extends Device {
     this._expectedStates.clear();
     this._notifiedDesyncs.clear();
     this._lastPropagatedValue = null;
+    this._pendingReportContext = null;
 
     if (this._verifyTimer) {
       this.homey.clearTimeout(this._verifyTimer);
@@ -203,21 +208,23 @@ class SwitchSyncDevice extends Device {
     if (suppressed && suppressed.value === value) {
       if (isDebug) this.log(`[${this.getName()}] Echo suppressed from "${sourceName}" (${value})`);
 
-      // This echo IS the confirmation — mark expected state as verified
+      // Echo IS the confirmation — mark expected state as verified and record timing
       const exp = this._expectedStates.get(sourceId);
       if (exp && exp.value === value) {
         exp.verified = true;
-        this._notifiedDesyncs.delete(sourceId); // Clear any previous desync alert
+        exp.syncedAt = Date.now() - exp.timestamp;
+        this._notifiedDesyncs.delete(sourceId);
       }
       return;
     }
 
     if (isDebug) this.log(`[${this.getName()}] "${sourceName}" → ${value ? 'ON' : 'OFF'}`);
 
-    // Mark as verified if it matches what we expected (protocol confirmed via state report)
+    // Mark as verified if it matches expected (late confirmation after suppress window)
     const exp = this._expectedStates.get(sourceId);
     if (exp && exp.value === value) {
       exp.verified = true;
+      exp.syncedAt = Date.now() - exp.timestamp;
       this._notifiedDesyncs.delete(sourceId);
     }
 
@@ -247,6 +254,12 @@ class SwitchSyncDevice extends Device {
     this._lastPropagatedValue = value;
     setImmediate(() => { this._lastPropagatedValue = null; });
 
+    // Store context for the verify report
+    const triggerName = sourceId
+      ? (this._deviceNames.get(sourceId) || sourceId)
+      : 'Virtual Switch';
+    this._pendingReportContext = { trigger: triggerName, value, startedAt: Date.now() };
+
     const deviceIds  = this.getStoreValue('deviceIds') || [];
     const suppressMs = this.getSetting('suppress_ms') || 2000;
     const isDebug    = this.getSetting('debug');
@@ -261,8 +274,7 @@ class SwitchSyncDevice extends Device {
 
       if (onoffInstance.value === value) {
         if (isDebug) this.log(`[${this.getName()}] "${device.name}" already ${value ? 'ON' : 'OFF'} — skipped`);
-        // Already correct — mark verified immediately
-        this._expectedStates.set(deviceId, { value, timestamp: Date.now(), verified: true });
+        this._expectedStates.set(deviceId, { value, timestamp: Date.now(), verified: true, syncedAt: 0 });
         return;
       }
 
@@ -273,7 +285,7 @@ class SwitchSyncDevice extends Device {
         return;
       }
 
-      // Register expectation — echo callback will mark verified
+      // Register expectation — echo callback will mark verified + set syncedAt
       this._expectedStates.set(deviceId, { value, timestamp: Date.now(), verified: false });
 
       await this._setDeviceValue(device, deviceId, value, suppressMs, isDebug);
@@ -307,32 +319,53 @@ class SwitchSyncDevice extends Device {
     }
   }
 
-  // ─── Post-propagation verify — detect silent failures ────────────────────
+  // ─── Post-propagation verify — build sync report ─────────────────────────
 
   async _verifyRecentPropagation() {
     const now = Date.now();
+    const ctx = this._pendingReportContext;
+
+    const report = {
+      timestamp:  new Date().toISOString(),
+      group:      this.getName(),
+      trigger:    ctx ? ctx.trigger : '?',
+      value:      ctx ? ctx.value  : null,
+      devices:    [],
+      hasError:   false,
+    };
+
     const desynced = [];
 
     for (const [deviceId, exp] of this._expectedStates) {
-      // Discard stale entries
       if (now - exp.timestamp > EXPECTED_STATE_TTL_MS) {
         this._expectedStates.delete(deviceId);
         continue;
       }
 
-      if (exp.verified || exp.offline) continue;
+      if (exp.offline) continue;
 
       const entry = this._listeners.get(deviceId);
       if (!entry) continue;
 
       const { device, onoffInstance } = entry;
 
-      if (onoffInstance.value === exp.value) {
+      if (exp.verified) {
+        report.devices.push({ name: device.name, synced: true, syncMs: exp.syncedAt || 0 });
+      } else if (onoffInstance.value === exp.value) {
+        // Confirmed by reading state directly (no echo received)
         exp.verified = true;
+        exp.syncedAt = now - exp.timestamp;
         this._notifiedDesyncs.delete(deviceId);
+        report.devices.push({ name: device.name, synced: true, syncMs: exp.syncedAt });
       } else {
+        report.devices.push({ name: device.name, synced: false, expected: exp.value, actual: onoffInstance.value });
         desynced.push({ deviceId, name: device.name, expected: exp.value, actual: onoffInstance.value });
+        report.hasError = true;
       }
+    }
+
+    if (report.devices.length > 0) {
+      this.homey.app.addSyncReport(report);
     }
 
     if (desynced.length > 0) {
@@ -348,8 +381,8 @@ class SwitchSyncDevice extends Device {
     const desynced = [];
 
     for (const [deviceId, { device, onoffInstance }] of this._listeners) {
-      if (!device.available) continue; // Offline devices are tracked via _pendingOffline
-      if (this._expectedStates.has(deviceId)) continue; // Propagation in progress, skip
+      if (!device.available) continue;
+      if (this._expectedStates.has(deviceId)) continue;
       if (onoffInstance.value !== virtualValue) {
         desynced.push({ deviceId, name: device.name, expected: virtualValue, actual: onoffInstance.value });
       }
@@ -366,6 +399,18 @@ class SwitchSyncDevice extends Device {
     if (desynced.length === 0) return;
 
     this.error(`[${this.getName()}] Health check: ${desynced.length} device(s) desynced — ${desynced.map(d => `${d.name}(${d.actual ? 'ON' : 'OFF'})`).join(', ')}`);
+
+    // Log health desyncs as error-only report (no timing context)
+    const report = {
+      timestamp: new Date().toISOString(),
+      group:     this.getName(),
+      trigger:   'Health Check',
+      value:     virtualValue,
+      devices:   desynced.map(d => ({ name: d.name, synced: false, expected: d.expected, actual: d.actual })),
+      hasError:  true,
+    };
+    this.homey.app.addSyncReport(report);
+
     await this._notifyDesynced(desynced);
   }
 
@@ -377,18 +422,6 @@ class SwitchSyncDevice extends Device {
 
     newDesyncs.forEach(d => this._notifiedDesyncs.add(d.deviceId));
 
-    // Always write to the global log
-    for (const d of newDesyncs) {
-      this.homey.app.addDesyncLog({
-        timestamp: new Date().toISOString(),
-        group:     this.getName(),
-        device:    d.name,
-        expected:  d.expected,
-        actual:    d.actual,
-      });
-    }
-
-    // Push notification — only if setting is enabled
     if (!this.getSetting('notify_on_desync')) return;
 
     const names = newDesyncs.map(d =>
@@ -415,8 +448,9 @@ class SwitchSyncDevice extends Device {
   async onDeleted() {
     this.log(`[${this.getName()}] Deleted — cleaning up`);
 
-    if (this._healthInterval) this.homey.clearInterval(this._healthInterval);
-    if (this._verifyTimer)    this.homey.clearTimeout(this._verifyTimer);
+    if (this._healthStartTimer) this.homey.clearTimeout(this._healthStartTimer);
+    if (this._healthInterval)   this.homey.clearInterval(this._healthInterval);
+    if (this._verifyTimer)      this.homey.clearTimeout(this._verifyTimer);
 
     for (const { onoffInstance } of this._listeners.values()) {
       try { onoffInstance.destroy(); } catch (_) {}

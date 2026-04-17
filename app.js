@@ -17,18 +17,18 @@ module.exports = class SwitchSyncApp extends Homey.App {
     return this._homeyAPI;
   }
 
-  addDesyncLog(entry) {
-    if (!this._desyncLog) {
-      this._desyncLog = this.homey.settings.get('desyncLog') || [];
+  addSyncReport(report) {
+    if (!this._syncLog) {
+      this._syncLog = this.homey.settings.get('desyncLog') || [];
     }
-    this._desyncLog.unshift(entry);
-    if (this._desyncLog.length > 100) this._desyncLog.length = 100;
+    this._syncLog.unshift(report);
+    if (this._syncLog.length > 200) this._syncLog.length = 200;
 
     // Debounce flash writes — max once per minute regardless of flapping
-    if (this._desyncLogTimer) return;
-    this._desyncLogTimer = this.homey.setTimeout(() => {
-      this._desyncLogTimer = null;
-      this.homey.settings.set('desyncLog', this._desyncLog);
+    if (this._syncLogTimer) return;
+    this._syncLogTimer = this.homey.setTimeout(() => {
+      this._syncLogTimer = null;
+      this.homey.settings.set('desyncLog', this._syncLog);
     }, 60000);
   }
 

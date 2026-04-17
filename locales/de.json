@@ -26,6 +26,24 @@
     "err_save": "Fehler beim Speichern der Gruppe.",
     "err_load": "Fehler beim Laden der Konfiguration."
   },
+  "device_settings": {
+    "section_devices": "Verknüpfte Schalter",
+    "section_advanced": "Erweitert",
+    "loading": "Laden…",
+    "no_devices": "Noch keine Geräte verknüpft.",
+    "switches_linked_singular": "Schalter verknüpft",
+    "switches_linked_plural": "Schalter verknüpft",
+    "suppress_label": "Echo-Unterdrückungsfenster",
+    "suppress_hint": "Echos nach dem Senden eines Befehls ignorieren (ms)",
+    "notify_label": "Benachrichtigung bei Desynchronisation",
+    "notify_hint": "Pushbenachrichtigung senden, wenn ein Gerät nicht synchronisiert",
+    "debug_label": "Debug-Protokollierung",
+    "debug_hint": "Ausführliche Logs in die App-Konsole schreiben",
+    "save": "Speichern",
+    "saved": "Gespeichert ✓",
+    "err_save": "Fehler beim Speichern der Einstellungen.",
+    "err_suppress_range": "Unterdrückungsfenster muss 500–10000 ms sein."
+  },
   "error": {
     "missing_devices": "verknüpfte(s) Gerät(e) nicht mehr gefunden. Bitte diese Gruppe reparieren.",
     "min_devices": "Gruppe benötigt mindestens 2 Geräte. Bitte diese Gruppe reparieren."
@@ -37,6 +55,8 @@
     "loading": "Laden...",
     "empty": "Keine Desynchronisierungsereignisse aufgezeichnet.",
     "expected": "Erwartet",
-    "actual": "Tatsächlich"
+    "actual": "Tatsächlich",
+    "filter_all": "Alle",
+    "filter_errors": "Fehler"
   }
 }

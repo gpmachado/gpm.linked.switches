@@ -26,6 +26,24 @@
     "err_save": "Errore durante il salvataggio del gruppo.",
     "err_load": "Errore durante il caricamento della configurazione."
   },
+  "device_settings": {
+    "section_devices": "Interruttori collegati",
+    "section_advanced": "Avanzate",
+    "loading": "Caricamento…",
+    "no_devices": "Nessun dispositivo collegato.",
+    "switches_linked_singular": "interruttore collegato",
+    "switches_linked_plural": "interruttori collegati",
+    "suppress_label": "Finestra di soppressione eco",
+    "suppress_hint": "Ignora gli echi dopo l'invio di un comando (ms)",
+    "notify_label": "Notifica in caso di desincronizzazione",
+    "notify_hint": "Invia una notifica push se un dispositivo non si sincronizza",
+    "debug_label": "Registro di debug",
+    "debug_hint": "Scrivi log dettagliati nella console dell'app",
+    "save": "Salva",
+    "saved": "Salvato ✓",
+    "err_save": "Errore durante il salvataggio delle impostazioni.",
+    "err_suppress_range": "La finestra di soppressione deve essere 500–10000 ms."
+  },
   "error": {
     "missing_devices": "dispositivo/i collegato/i non trovato/i. Ripara questo gruppo.",
     "min_devices": "Il gruppo richiede almeno 2 dispositivi. Ripara questo gruppo."
@@ -37,6 +55,8 @@
     "loading": "Caricamento...",
     "empty": "Nessun evento di desincronizzazione registrato.",
     "expected": "Atteso",
-    "actual": "Effettivo"
+    "actual": "Effettivo",
+    "filter_all": "Tutti",
+    "filter_errors": "Errori"
   }
 }

@@ -26,6 +26,24 @@
     "err_save": "Error al guardar el grupo.",
     "err_load": "Error al cargar la configuración."
   },
+  "device_settings": {
+    "section_devices": "Interruptores vinculados",
+    "section_advanced": "Avanzado",
+    "loading": "Cargando…",
+    "no_devices": "Aún no hay dispositivos vinculados.",
+    "switches_linked_singular": "interruptor vinculado",
+    "switches_linked_plural": "interruptores vinculados",
+    "suppress_label": "Ventana de supresión de eco",
+    "suppress_hint": "Ignorar ecos tras enviar un comando (ms)",
+    "notify_label": "Notificar en caso de desincronización",
+    "notify_hint": "Enviar notificación push si un dispositivo no se sincroniza",
+    "debug_label": "Registro de depuración",
+    "debug_hint": "Escribir registros detallados en la consola de la app",
+    "save": "Guardar",
+    "saved": "Guardado ✓",
+    "err_save": "Error al guardar la configuración.",
+    "err_suppress_range": "La ventana de supresión debe ser de 500 a 10000 ms."
+  },
   "error": {
     "missing_devices": "dispositivo(s) vinculado(s) no encontrado(s). Por favor, repara este grupo.",
     "min_devices": "El grupo necesita al menos 2 dispositivos. Por favor, repara este grupo."
@@ -37,6 +55,8 @@
     "loading": "Cargando...",
     "empty": "No se han registrado eventos de desincronización.",
     "expected": "Esperado",
-    "actual": "Real"
+    "actual": "Real",
+    "filter_all": "Todo",
+    "filter_errors": "Errores"
   }
 }

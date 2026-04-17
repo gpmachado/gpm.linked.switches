@@ -12,38 +12,96 @@
       color: #1a1a1a;
       padding: 16px;
     }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
     h2 {
       font-size: 11px;
       font-weight: 700;
       color: #999;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      margin-bottom: 8px;
+      flex: 1;
     }
-    .actions { display: flex; gap: 8px; margin-bottom: 16px; }
-    button {
-      flex: 1; padding: 10px; border: none; border-radius: 8px;
-      font-size: 14px; cursor: pointer; background: #e8f0fe;
+    .filter-btn {
+      padding: 5px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fff;
+      color: #666;
+    }
+    .filter-btn.active {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #1a1a1a;
+    }
+    .actions { display: flex; gap: 8px; margin-bottom: 14px; }
+    button.action {
+      flex: 1; padding: 9px; border: none; border-radius: 8px;
+      font-size: 13px; cursor: pointer; background: #e8f0fe;
       color: #1a73e8; font-weight: 500;
     }
-    button.danger { background: #fce8e6; color: #d93025; }
+    button.action.danger { background: #fce8e6; color: #d93025; }
+
     .log-entry {
-      background: #fff; border-radius: 8px; padding: 10px 12px;
-      font-size: 13px; line-height: 1.5; margin-bottom: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
     }
-    .ts { color: #888; font-size: 11px; margin-bottom: 2px; }
-    .state { color: #d93025; font-size: 12px; margin-top: 2px; }
+    .log-entry.has-error { border-left: 3px solid #d93025; }
+    .log-entry.all-ok    { border-left: 3px solid #34a853; }
+
+    .entry-header {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+    .ts { color: #aaa; font-size: 11px; flex-shrink: 0; }
+    .group-name { font-weight: 600; font-size: 13px; }
+    .trigger {
+      font-size: 11px;
+      color: #777;
+      margin-left: auto;
+    }
+    .trigger span { font-weight: 500; color: #444; }
+
+    .device-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 2px 0;
+    }
+    .device-row .icon { font-size: 11px; flex-shrink: 0; }
+    .device-row .dname { flex: 1; color: #333; }
+    .device-row .timing { color: #888; font-size: 11px; }
+    .device-row .error-state { color: #d93025; font-size: 11px; }
+
     .empty { text-align: center; color: #aaa; font-size: 14px; padding: 32px 0; }
   </style>
 </head>
 <body>
 
-  <h2 id="lbl-title"></h2>
+  <div class="toolbar">
+    <h2 id="lbl-title"></h2>
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all')"></button>
+    <button class="filter-btn" id="btn-errors" onclick="setFilter('errors')"></button>
+  </div>
 
   <div class="actions">
-    <button id="btn-copy"></button>
-    <button id="btn-clear" class="danger"></button>
+    <button class="action" id="btn-copy" onclick="copyLog()"></button>
+    <button class="action danger" id="btn-clear" onclick="clearLog()"></button>
   </div>
 
   <div id="log-list"><div class="empty" id="lbl-loading"></div></div>
@@ -51,64 +109,123 @@
   <script src="/homey.js" data-origin="settings"></script>
   <script>
     var currentLog = [];
+    var currentFilter = 'all';
 
     function formatTs(iso) {
       var d = new Date(iso);
-      return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+      return d.toLocaleDateString([], { day: '2-digit', month: 'short' }) +
+             ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function setFilter(f) {
+      currentFilter = f;
+      document.getElementById('btn-all').classList.toggle('active', f === 'all');
+      document.getElementById('btn-errors').classList.toggle('active', f === 'errors');
+      render(currentLog);
+    }
+
+    function renderRichEntry(e) {
+      var header = '<div class="entry-header">' +
+        '<span class="ts">' + formatTs(e.timestamp) + '</span>' +
+        '<span class="group-name">' + e.group + '</span>' +
+        '<span class="trigger"><span>' + e.trigger + '</span> → ' + (e.value ? 'ON' : 'OFF') + '</span>' +
+        '</div>';
+
+      var rows = (e.devices || []).map(function(d) {
+        if (d.synced) {
+          var ms = d.syncMs > 0 ? ' +' + d.syncMs + 'ms' : '';
+          return '<div class="device-row">' +
+            '<span class="icon">✓</span>' +
+            '<span class="dname">' + d.name + '</span>' +
+            '<span class="timing">' + ms + '</span>' +
+            '</div>';
+        } else {
+          return '<div class="device-row">' +
+            '<span class="icon" style="color:#d93025">✗</span>' +
+            '<span class="dname">' + d.name + '</span>' +
+            '<span class="error-state">' +
+            (d.expected ? 'ON' : 'OFF') + '→' + (d.actual ? 'ON' : 'OFF') +
+            '</span></div>';
+        }
+      }).join('');
+
+      return '<div class="log-entry ' + (e.hasError ? 'has-error' : 'all-ok') + '">' +
+        header + rows + '</div>';
+    }
+
+    // Backward-compatible: old flat format { group, device, expected, actual }
+    function renderLegacyEntry(e) {
+      return '<div class="log-entry has-error">' +
+        '<div class="entry-header">' +
+          '<span class="ts">' + formatTs(e.timestamp) + '</span>' +
+          '<span class="group-name">' + e.group + '</span>' +
+        '</div>' +
+        '<div class="device-row">' +
+          '<span class="icon" style="color:#d93025">✗</span>' +
+          '<span class="dname">' + e.device + '</span>' +
+          '<span class="error-state">' +
+            (e.expected ? 'ON' : 'OFF') + '→' + (e.actual ? 'ON' : 'OFF') +
+          '</span>' +
+        '</div></div>';
+    }
+
+    function render(log) {
+      currentLog = log || [];
+      var filtered = currentFilter === 'errors'
+        ? currentLog.filter(function(e) { return e.hasError !== false; })
+        : currentLog;
+
+      var list = document.getElementById('log-list');
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">' + Homey.__('settings.empty') + '</div>';
+        return;
+      }
+      list.innerHTML = filtered.map(function(e) {
+        return e.devices ? renderRichEntry(e) : renderLegacyEntry(e);
+      }).join('');
+    }
+
+    function clearLog() {
+      Homey.set('desyncLog', [], function(err) { if (!err) { currentLog = []; render([]); } });
+    }
+
+    function copyLog() {
+      if (currentLog.length === 0) return;
+      var text = currentLog.map(function(e) {
+        if (e.devices) {
+          var devs = e.devices.map(function(d) {
+            return d.synced
+              ? '  ✓ ' + d.name + (d.syncMs > 0 ? ' +' + d.syncMs + 'ms' : '')
+              : '  ✗ ' + d.name + ' (' + (d.expected ? 'ON' : 'OFF') + '→' + (d.actual ? 'ON' : 'OFF') + ')';
+          }).join('\n');
+          return e.timestamp + ' | ' + e.group + ' | trigger:' + e.trigger +
+            ' → ' + (e.value ? 'ON' : 'OFF') + '\n' + devs;
+        }
+        return e.timestamp + ' | ' + e.group + ' | ' + e.device +
+          ' | ' + (e.expected ? 'ON' : 'OFF') + '→' + (e.actual ? 'ON' : 'OFF');
+      }).join('\n\n');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
     }
 
     function onHomeyReady(Homey) {
       Homey.ready();
 
-      document.getElementById('lbl-title').textContent   = Homey.__('settings.log_title');
-      document.getElementById('btn-copy').textContent    = Homey.__('settings.copy');
-      document.getElementById('btn-clear').textContent   = Homey.__('settings.clear');
+      document.getElementById('lbl-title').textContent  = Homey.__('settings.log_title');
+      document.getElementById('btn-copy').textContent   = Homey.__('settings.copy');
+      document.getElementById('btn-clear').textContent  = Homey.__('settings.clear');
+      document.getElementById('btn-all').textContent    = Homey.__('settings.filter_all');
+      document.getElementById('btn-errors').textContent = Homey.__('settings.filter_errors');
       document.getElementById('lbl-loading').textContent = Homey.__('settings.loading');
 
-      function render(log) {
-        currentLog = log || [];
-        var list = document.getElementById('log-list');
-        if (currentLog.length === 0) {
-          list.innerHTML = '<div class="empty">' + Homey.__('settings.empty') + '</div>';
-          return;
-        }
-        list.innerHTML = currentLog.map(function(e) {
-          return '<div class="log-entry">' +
-            '<div class="ts">' + formatTs(e.timestamp) + '</div>' +
-            '<div><strong>' + e.group + '</strong> — ' + e.device + '</div>' +
-            '<div class="state">' + Homey.__('settings.expected') + ': ' + (e.expected ? 'ON' : 'OFF') +
-            '  ·  ' + Homey.__('settings.actual') + ': ' + (e.actual ? 'ON' : 'OFF') + '</div>' +
-            '</div>';
-        }).join('');
-      }
-
       Homey.get('desyncLog', function(err, log) { render(log); });
-
-      document.getElementById('btn-clear').addEventListener('click', function() {
-        Homey.set('desyncLog', [], function(err) { if (!err) render([]); });
-      });
-
-      document.getElementById('btn-copy').addEventListener('click', function() {
-        if (currentLog.length === 0) return;
-        var text = currentLog.map(function(e) {
-          return e.timestamp + ' | ' + e.group + ' | ' + e.device +
-            ' | expected:' + (e.expected ? 'ON' : 'OFF') +
-            ' actual:' + (e.actual ? 'ON' : 'OFF');
-        }).join('\n');
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text);
-        } else {
-          var ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-        }
-      });
     }
   </script>
 </body>

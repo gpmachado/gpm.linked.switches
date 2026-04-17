@@ -26,6 +26,24 @@
     "err_save": "Fout bij opslaan van de groep.",
     "err_load": "Fout bij laden van de configuratie."
   },
+  "device_settings": {
+    "section_devices": "Gekoppelde schakelaars",
+    "section_advanced": "Geavanceerd",
+    "loading": "Laden…",
+    "no_devices": "Nog geen apparaten gekoppeld.",
+    "switches_linked_singular": "schakelaar gekoppeld",
+    "switches_linked_plural": "schakelaars gekoppeld",
+    "suppress_label": "Echo-onderdrukkingsvenster",
+    "suppress_hint": "Echo's negeren na het verzenden van een opdracht (ms)",
+    "notify_label": "Melding bij desynchronisatie",
+    "notify_hint": "Stuur een pushmelding als een apparaat niet synchroniseert",
+    "debug_label": "Foutopsporingslogboek",
+    "debug_hint": "Uitgebreide logs schrijven naar de app-console",
+    "save": "Opslaan",
+    "saved": "Opgeslagen ✓",
+    "err_save": "Fout bij opslaan van instellingen.",
+    "err_suppress_range": "Onderdrukkingsvenster moet 500–10000 ms zijn."
+  },
   "error": {
     "missing_devices": "gekoppeld(e) apparaat/apparaten niet meer gevonden. Herstel deze groep.",
     "min_devices": "Groep heeft minimaal 2 apparaten nodig. Herstel deze groep."
@@ -37,6 +55,8 @@
     "loading": "Laden...",
     "empty": "Geen desynchroon-gebeurtenissen geregistreerd.",
     "expected": "Verwacht",
-    "actual": "Werkelijk"
+    "actual": "Werkelijk",
+    "filter_all": "Alles",
+    "filter_errors": "Fouten"
   }
 }
