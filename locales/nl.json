@@ -70,7 +70,7 @@
     "boot_sync_label": "Opstartsynchronisatie (Linked Switch):",
     "boot_sync_keep_virtual": "Groepsstatus behouden",
     "boot_sync_any_on_wins": "Elke ON wint",
-    "boot_sync_hint": "Bij een herstart van Homey zet \"Groepsstatus behouden\" de laatste AAN/UIT-status van de groep terug op de apparaten (bijv. na een stroomstoring). \"Elke ON wint\" zet de groep AAN als een apparaat AAN staat."
+    "boot_sync_hint": "Bij een herstart van Homey zet \"Groepsstatus behouden\" de laatste AAN/UIT-status van de groep terug op de apparaten. \"Elke ON wint\" zet de groep AAN als een apparaat AAN staat."
   },
   "sync": {
     "virtual_switch": "Virtuele schakelaar",
@@ -88,7 +88,9 @@
     "device_removed_degraded": "Apparaat verwijderd — groep verminderd ({remaining} apparaten over, werkt nog)",
     "device_removed_condemned": "Apparaat verwijderd — groep onbruikbaar ({remaining} apparaat/apparaten over, reparatie nodig)",
     "slave_removed_degraded": "Slave verwijderd — groep verminderd ({remaining} slave(s) over, werkt nog)",
-    "slave_removed_condemned": "Slave verwijderd — groep onbruikbaar ({remaining} slave(s) over, reparatie nodig)"
+    "slave_removed_condemned": "Slave verwijderd — groep onbruikbaar ({remaining} slave(s) over, reparatie nodig)",
+    "resubscribe_attempted": "Automatisch opnieuw abonneren geprobeerd",
+    "master_missing": "Master-apparaat ontbreekt — groep moet worden gerepareerd"
   },
   "master_wizard": {
     "master_name": "Naam virtueel apparaat",

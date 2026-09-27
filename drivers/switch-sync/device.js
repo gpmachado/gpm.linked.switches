@@ -61,7 +61,7 @@ class SwitchSyncDevice extends LinkedGroupDevice {
     this._isBootSync = false;
 
     // The first subscribe after init follows the global boot sync policy;
-    // later re-subscribes adopt the devices' state (see _resolveSyncPolicy).
+    // later re-subscribes only re-attach listeners (see _resolveSyncPolicy).
     this._bootPending = true;
 
     // Same-tick dedup
@@ -81,18 +81,20 @@ class SwitchSyncDevice extends LinkedGroupDevice {
     this._startHealthMonitor();
   }
 
-  async reloadConfiguration() {
+  // `align`: also align the devices to the group state (Repair). The health check
+  // leaves it off: it must never change devices or the group on its own.
+  async reloadConfiguration({ align = false } = {}) {
     this._debug('reloading configuration');
-    await this._subscribeToDevices();
+    await this._subscribeToDevices(align);
   }
 
   // ─── Subscribe ────────────────────────────────────────────────────────────
 
-  async _subscribeToDevices() {
-    return this._enqueue(() => this._subscribeToDevicesNow());
+  async _subscribeToDevices(align = false) {
+    return this._enqueue(() => this._subscribeToDevicesNow(align));
   }
 
-  async _subscribeToDevicesNow() {
+  async _subscribeToDevicesNow(align = false) {
     for (const { onoffInstance } of this._listeners.values()) {
       try { onoffInstance.destroy(); } catch (_) {}
     }
@@ -189,8 +191,9 @@ class SwitchSyncDevice extends LinkedGroupDevice {
       this.error(`Failed to update settings: ${err.message}`);
     }
 
-    const policy = this._resolveSyncPolicy();
+    const policy = this._resolveSyncPolicy(align);
     this._debug(`sync policy: ${policy}`);
+    if (!policy) return; // plain re-subscribe: listeners re-attached, state untouched
 
     this._isBootSync = true;
     try {
@@ -223,18 +226,20 @@ class SwitchSyncDevice extends LinkedGroupDevice {
     }
   }
 
-  // The first subscribe after init follows the global `boot_sync_policy`. Re-subscribes
-  // (health check, Repair) adopt the devices' state: the listener may have missed changes,
-  // so the stored group state can be stale and must not overwrite a real toggle. A just-paired
-  // group has no saved state to keep either, so it adopts the devices' state too.
-  _resolveSyncPolicy() {
+  // The first subscribe after init follows the global `boot_sync_policy`. A later
+  // re-subscribe (health check) returns null: it only re-attaches listeners, because a failed
+  // write leaves a device out of step and neither adopting that state nor rewriting devices
+  // is safe. Repair (`align`) aligns devices to the group state. A just-paired group has no
+  // saved state to keep, so it adopts its devices' state.
+  _resolveSyncPolicy(align = false) {
     const isBoot = this._bootPending;
     this._bootPending = false;
 
     const isNewGroup = this.getStoreValue('pendingInitialSync') === true;
     if (isNewGroup) this.setStoreValue('pendingInitialSync', false).catch(() => {});
 
-    if (!isBoot || isNewGroup || typeof this.getCapabilityValue('onoff') !== 'boolean') return 'any_on_wins';
+    if (isNewGroup || typeof this.getCapabilityValue('onoff') !== 'boolean') return 'any_on_wins';
+    if (!isBoot) return align ? 'keep_virtual' : null;
 
     const policy = this.homey.settings.get('boot_sync_policy');
     return BOOT_SYNC_POLICIES.includes(policy) ? policy : DEFAULT_BOOT_SYNC_POLICY;
@@ -566,7 +571,7 @@ class SwitchSyncDevice extends LinkedGroupDevice {
       }
 
       // Stagger non-primary devices to avoid Zigbee congestion.
-      const staggerMs = (deviceId === primaryId) ? 0 : index * SLAVE_STAGGER_MS;
+      const staggerMs = (deviceId === primaryId || index === 0) ? 0 : SLAVE_STAGGER_MS;
       index++;
       if (staggerMs > 0) {
         this._debug('stagger wait', { device: device.name, staggerMs });
@@ -781,7 +786,7 @@ class SwitchSyncDevice extends LinkedGroupDevice {
         devices:   newDesyncs.map(d => ({ name: d.name, synced: false, expected: d.expected, actual: d.actual })),
         hasError:  true,
         important: true,
-        note:      'Automatic re-subscription attempted',
+        note:      this.homey.__('sync.resubscribe_attempted'),
       });
       await this.reloadConfiguration();
       return;
@@ -826,8 +831,8 @@ class SwitchSyncDevice extends LinkedGroupDevice {
 
     try {
       const excerpt = this.homey.__('sync.notification_excerpt')
-        .replace('{group}', this.getName())
-        .replace('{devices}', names);
+        .replace('{group}', () => this.getName())
+        .replace('{devices}', () => names);
       await this.homey.notifications.createNotification({ excerpt });
     } catch (err) {
       this.error(`[${this.getName()}] Could not send notification: ${err.message}`);

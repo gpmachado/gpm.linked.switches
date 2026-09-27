@@ -70,7 +70,7 @@
     "boot_sync_label": "Sincronización al arranque (Linked Switch):",
     "boot_sync_keep_virtual": "Mantener el estado del grupo",
     "boot_sync_any_on_wins": "Cualquier ON gana",
-    "boot_sync_hint": "Al reiniciar Homey, «Mantener el estado del grupo» restaura en los dispositivos el último estado ON/OFF del grupo (p. ej. tras un corte de luz). «Cualquier ON gana» enciende el grupo si algún dispositivo está ON."
+    "boot_sync_hint": "Al reiniciar Homey, «Mantener el estado del grupo» restaura en los dispositivos el último estado ON/OFF del grupo. «Cualquier ON gana» enciende el grupo si algún dispositivo está ON."
   },
   "sync": {
     "virtual_switch": "Interruptor virtual",
@@ -88,7 +88,9 @@
     "device_removed_degraded": "Dispositivo eliminado — grupo degradado (quedan {remaining} dispositivos, sigue funcionando)",
     "device_removed_condemned": "Dispositivo eliminado — grupo inutilizable (quedan {remaining} dispositivo(s), requiere reparación)",
     "slave_removed_degraded": "Esclavo eliminado — grupo degradado (quedan {remaining} esclavo(s), sigue funcionando)",
-    "slave_removed_condemned": "Esclavo eliminado — grupo inutilizable (quedan {remaining} esclavo(s), requiere reparación)"
+    "slave_removed_condemned": "Esclavo eliminado — grupo inutilizable (quedan {remaining} esclavo(s), requiere reparación)",
+    "resubscribe_attempted": "Reintento automático de suscripción",
+    "master_missing": "Falta el dispositivo maestro — el grupo necesita reparación"
   },
   "master_wizard": {
     "master_name": "Nombre del dispositivo virtual",

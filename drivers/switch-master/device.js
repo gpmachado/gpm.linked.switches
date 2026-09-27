@@ -224,7 +224,7 @@ class SwitchMasterDevice extends LinkedGroupDevice {
       devices:   [{ name: ghostName, synced: false, removed: true }],
       hasError:  true,
       important: true,
-      note:      'Master device missing — group needs repair',
+      note:      this.homey.__('sync.master_missing'),
     });
   }
 
@@ -260,7 +260,7 @@ class SwitchMasterDevice extends LinkedGroupDevice {
     }
 
     await this.setCapabilityOptions('onoff', {
-      title: { en: this._master ? this.homey.__('sync.master_title').replace('{name}', this._master.device.name) : this.homey.__('sync.master_switch') },
+      title: { en: this._master ? this.homey.__('sync.master_title').replace('{name}', () => this._master.device.name) : this.homey.__('sync.master_switch') },
     }).catch(() => {});
 
     for (let i = 0; i < controlIds.length; i++) {
@@ -524,7 +524,7 @@ class SwitchMasterDevice extends LinkedGroupDevice {
         continue;
       }
 
-      const staggerMs = index * SLAVE_STAGGER_MS;
+      const staggerMs = index > 0 ? SLAVE_STAGGER_MS : 0;
       if (staggerMs > 0) {
         this._debug('stagger wait', { source, device: entry.device.name, staggerMs });
         await new Promise(resolve => this.homey.setTimeout(resolve, staggerMs));

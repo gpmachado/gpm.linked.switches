@@ -110,12 +110,13 @@ A global setting (app **Configure** page) for **Linked Switch** groups. It decid
 
 | Policy | What happens at startup |
 |---|---|
-| **Keep group state** (default) | The group's last saved ON/OFF state is restored onto its devices. A lamp that powered back on while the group was OFF is turned OFF again. |
+| **Keep group state** (default) | The group's last saved ON/OFF state is written to every device that differs from it when the app starts. |
 | **Any ON wins** | If any device in the group is ON, the group becomes ON and the rest are turned ON. |
 
 Notes:
 
-- The policy only applies at startup. Later re-subscriptions (health check, Repair) follow **Any ON wins**, because a missed change means the saved group state may be stale.
+- The policy only applies at startup, and only to devices whose state is already known to differ then. A device that reports its state after startup is handled as a normal change.
+- A re-subscription by the health check only re-attaches listeners: it never changes a device or the group. **Repair** aligns the devices to the group's saved state.
 - A group that has no saved state yet (just created) adopts its devices' state, whichever policy is set.
 - With **Keep group state**, a wall switch flipped while Homey was down is reverted to the group's saved state.
 - Switch Master groups are not affected.

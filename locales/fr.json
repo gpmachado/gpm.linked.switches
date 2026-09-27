@@ -70,7 +70,7 @@
     "boot_sync_label": "Synchronisation au démarrage (Linked Switch) :",
     "boot_sync_keep_virtual": "Conserver l'état du groupe",
     "boot_sync_any_on_wins": "Tout ON l'emporte",
-    "boot_sync_hint": "Au redémarrage de Homey, « Conserver l'état du groupe » rétablit sur les appareils le dernier état ON/OFF du groupe (p. ex. après une coupure de courant). « Tout ON l'emporte » passe le groupe sur ON dès qu'un appareil est ON."
+    "boot_sync_hint": "Au redémarrage de Homey, « Conserver l'état du groupe » rétablit sur les appareils le dernier état ON/OFF du groupe. « Tout ON l'emporte » passe le groupe sur ON dès qu'un appareil est ON."
   },
   "sync": {
     "virtual_switch": "Interrupteur virtuel",
@@ -88,7 +88,9 @@
     "device_removed_degraded": "Appareil retiré — groupe dégradé ({remaining} appareils restants, toujours fonctionnel)",
     "device_removed_condemned": "Appareil retiré — groupe condamné ({remaining} appareil(s) restant(s), réparation nécessaire)",
     "slave_removed_degraded": "Esclave retiré — groupe dégradé ({remaining} esclave(s) restant(s), toujours fonctionnel)",
-    "slave_removed_condemned": "Esclave retiré — groupe condamné ({remaining} esclave(s) restant(s), réparation nécessaire)"
+    "slave_removed_condemned": "Esclave retiré — groupe condamné ({remaining} esclave(s) restant(s), réparation nécessaire)",
+    "resubscribe_attempted": "Réabonnement automatique tenté",
+    "master_missing": "Appareil maître manquant — le groupe doit être réparé"
   },
   "master_wizard": {
     "master_name": "Nom de l’appareil virtuel",

@@ -168,7 +168,7 @@ class SwitchSyncDriver extends Driver {
       await device.setStoreValue('deviceIds', unique).catch(this.error);
       await device.setStoreValue('primaryDeviceId', primaryId).catch(this.error);
       if (typeof device.reloadConfiguration === 'function') {
-        await device.reloadConfiguration().catch(err => this.error(`reloadConfiguration error: ${err.message}`));
+        await device.reloadConfiguration({ align: true }).catch(err => this.error(`reloadConfiguration error: ${err.message}`));
       }
       return true;
     });
