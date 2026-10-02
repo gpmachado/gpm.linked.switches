@@ -117,7 +117,7 @@ class SwitchSyncDriver extends Driver {
         throw new Error(this.homey.__('repair.err_primary_not_selected'));
       }
       this._assertNoConflicts(ids, primaryId);
-      pendingConfig = config;
+      pendingConfig = { ...config, deviceIds: ids };
       return true;
     });
 
@@ -153,10 +153,9 @@ class SwitchSyncDriver extends Driver {
     });
 
     session.setHandler('save_config', async (config) => {
-      const ids = config.deviceIds;
-      if (!Array.isArray(ids) || ids.length < 2)
+      const unique = [...new Set(Array.isArray(config.deviceIds) ? config.deviceIds : [])];
+      if (unique.length < 2)
         throw new Error(this.homey.__('repair.err_min2'));
-      const unique = [...new Set(ids)];
       const primaryId = config.primaryDeviceId || null;
       if (primaryId && !unique.includes(primaryId)) {
         throw new Error(this.homey.__('repair.err_primary_not_selected'));

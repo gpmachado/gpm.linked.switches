@@ -111,15 +111,20 @@ module.exports = class SwitchSyncApp extends Homey.App {
     this.homey.settings.set('desyncLog', []);
   }
 
+  // ON/OFF, or '?' when the state is unknown (a failed write, a removed device).
+  _stateLabel(value) {
+    return typeof value === 'boolean' ? (value ? 'ON' : 'OFF') : '?';
+  }
+
   _formatSyncReport(report) {
     if (!report || !Array.isArray(report.devices) || report.devices.length === 0) return '';
-    const target = typeof report.value === 'boolean' ? (report.value ? 'ON' : 'OFF') : '?';
+    const target = this._stateLabel(report.value);
 
     if (report.hasError) {
       const failed = report.devices
         .filter(device => !device.synced)
         .map(device => {
-          const state = `${device.expected ? 'ON' : 'OFF'} expected, ${device.actual ? 'ON' : 'OFF'} actual`;
+          const state = `${this._stateLabel(device.expected)} expected, ${this._stateLabel(device.actual)} actual`;
           return device.errorMessage
             ? `${device.name} (${state}; ${device.errorMessage})`
             : `${device.name} (${state})`;

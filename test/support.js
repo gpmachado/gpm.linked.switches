@@ -2,18 +2,35 @@
 
 const Module = require('module');
 
-// The `homey` module only exists inside the Homey runtime; stub just enough of Device.
+// The `homey` module only exists inside the Homey runtime; stub just enough of it.
 class FakeDevice {
   getName() { return 'Group'; }
   getSetting(key) { return this.settings ? this.settings[key] : undefined; }
   log() {}
 }
+class FakeDriver {
+  log() {}
+  error() {}
+}
+class FakeApp {
+  log() {}
+  error() {}
+}
 const load = Module._load;
-Module._load = function (request, ...rest) {
-  return request === 'homey' ? { Device: FakeDevice } : load.call(this, request, ...rest);
-};
-const LinkedGroupDevice = require('../lib/LinkedGroupDevice');
-Module._load = load;
+
+// Requires a module with `require('homey')` resolved to the stubs above.
+function requireWithHomey(modulePath) {
+  Module._load = function (request, ...rest) {
+    return request === 'homey' ? { Device: FakeDevice, Driver: FakeDriver, App: FakeApp } : load.call(this, request, ...rest);
+  };
+  try {
+    return require(modulePath);
+  } finally {
+    Module._load = load;
+  }
+}
+
+const LinkedGroupDevice = requireWithHomey('../lib/LinkedGroupDevice');
 
 // Timers are unref'd so a pending verify/health timer never keeps the test run alive.
 const unrefTimeout = (fn, ms) => setTimeout(fn, ms).unref();
@@ -82,4 +99,4 @@ async function makeSyncGroup({ policy, virtual = null, state, store = {} }) {
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-module.exports = { makeDevice, makeSyncGroup, wait };
+module.exports = { makeDevice, makeSyncGroup, requireWithHomey, wait };
